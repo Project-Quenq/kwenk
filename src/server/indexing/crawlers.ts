@@ -144,7 +144,7 @@ export function blockedCrawlerMiddleware(): MiddlewareHandler<AppBindings> {
     if (path !== "/robots.txt" && crawlerKind(c.req.header("user-agent")) === "blocked") {
       c.header("X-Robots-Tag", noindexHeader);
       c.header("Cache-Control", "private, no-store");
-      return c.text("Crawler access is not allowed for this site.", 403);
+      return c.text("Crawler access is not allowed for this page.", 403);
     }
     await next();
   };
@@ -175,6 +175,11 @@ export function robotsText() {
 
 export function crawlerKind(userAgent: string | undefined) {
   if (!userAgent) return "crawler";
+  
+  if (userAgent.includes("Mediapartners-Google") || userAgent.includes("Google-Adwords")) {
+    return "browser";
+  }
+  
   if (aiCrawlerPattern.test(userAgent)) return "blocked";
   if (crawlerPattern.test(userAgent)) return "crawler";
   return "browser";
