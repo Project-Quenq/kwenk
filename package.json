@@ -15,7 +15,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "assets:brand": "tsx src/scripts/generateBrandAssets.ts",
     "assets:brand:clean": "tsx src/scripts/generateBrandAssets.ts --clean",
-    "build": "pnpm clean && tsc -p tsconfig.json",
+    "build": "pnpm clean && tsc -p tsconfig.json && node dist/scripts/buildCss.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "db:init": "tsx --env-file=.env src/server/db/init.ts"
   },

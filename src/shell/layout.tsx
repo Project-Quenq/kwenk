@@ -16,6 +16,8 @@ import { Nav } from "./nav.js";
 import { PageFrame } from "./page.js";
 import { SeoHead } from "./seo.js";
 
+const cssVersion = Date.now().toString(36);
+
 export function Layout(props: {
   title: string;
   user: CurrentUser | null;
@@ -56,7 +58,7 @@ export function Layout(props: {
             <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
             <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
             <link rel="manifest" href="/site.webmanifest" />
-            <link rel="stylesheet" href="/static/css/style.css" />
+            <link rel="stylesheet" href={`/static/css/style.css?v=${cssVersion}`} />
             <link rel="stylesheet" href="/theme.css" />
             <link rel="stylesheet" href="/branding.css" />
             {props.styles?.map((href) => <link key={href} rel="stylesheet" href={href} />)}
