@@ -8,7 +8,7 @@ import { Panel } from "../../ui/panels.js";
 import { PeopleBox } from "../../ui/people.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
 import { coolNewPeople } from "./featuredPeople.js";
-import { AnnouncementBox, InfoCard, landingCards, SourceBox } from "./infoPanels.js";
+import { AnnouncementBox, InfoCard, landingCards, AdBanner } from "./infoPanels.js";
 
 export function LandingPage(props: {
   user: CurrentUser | null;
@@ -53,7 +53,7 @@ export function LandingPage(props: {
             </FormStack>
             {props.passwordResetAvailable ? <a class="forgot" href="/reset">Forgot your password?</a> : null}
           </Panel>
-          {/* <SourceBox /> */}
+          <AdBanner />
         </SplitPane>
       </SplitLayout>
       <div class="info-grid">

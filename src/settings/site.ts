@@ -37,14 +37,14 @@ export const defaultHeaderIconSvg = brandIconSvg;
 
 export const defaultSiteSettings = {
   identity: {
-    name: "my quenq",
-    tagline: "your corner of the retro web",
+    name: "My Quenq",
+    tagline: "Your Personal Web Space",
     headerIconName: defaultHeaderIconName,
     headerIconSvg: defaultHeaderIconSvg
   },
   home: {
-    announcement: "Welcome to my quenq! Claim your unique handle, design your profile page with custom HTML/CSS, and join our quiet corner of the retro web, free from feed algorithms and AI slop.",
-    welcomeText: "Welcome to my quenq, a creative, nostalgic web community inspired by the early days of the internet. It is a quiet space to express yourself, write blogs, and connect with friends."
+    announcement: "Claim your unique handle, design your profile page with custom HTML/CSS, and join our quiet corner of the retro web, free from feed algorithms and AI slop.",
+    welcomeText: "Welcome to My Quenq, a creative, nostalgic web community inspired by the early days of the internet. It is a quiet space to express yourself, write blogs, and connect with friends."
   },
   contact: {
     email: "support@quenq.com",
@@ -60,16 +60,12 @@ export const defaultSiteSettings = {
 const appIconSize = 1024;
 
 export function siteFaviconSvg(settings: SiteSettings, palette: ColorPalette = defaultColorPalette) {
-  if (settings.identity.headerIconName === defaultHeaderIconName) {
-    return brandIconSvg;
-  }
-  
   const background = mixColor(palette.chrome, "#000000", 0.28);
   const iconColor = palette.chromeText;
   return [
     '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" aria-hidden="true">',
     `<circle cx="12" cy="12" r="11" fill="${background}" />`,
-    `<g color="${iconColor}" fill="${iconColor}" stroke="${iconColor}">`,
+    `<g color="${iconColor}" fill="${iconColor}" style="stroke: none !important; stroke-width: 0 !important;">`,
     identityIconSvg(settings.identity.headerIconSvg, 3, 3, 18, 18),
     "</g>",
     "</svg>"
@@ -77,16 +73,12 @@ export function siteFaviconSvg(settings: SiteSettings, palette: ColorPalette = d
 }
 
 export function siteAppIconSvg(settings: SiteSettings, palette: ColorPalette = defaultColorPalette) {
-  if (settings.identity.headerIconName === defaultHeaderIconName) {
-    return brandIconSvg.replace('viewBox="0 0 300 300"', `width="${appIconSize}" height="${appIconSize}" viewBox="0 0 300 300"`);
-  }
-
   const background = mixColor(palette.chrome, "#000000", 0.28);
   const iconColor = palette.chromeText;
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${appIconSize}" height="${appIconSize}" viewBox="0 0 ${appIconSize} ${appIconSize}" aria-hidden="true">`,
     `<rect width="${appIconSize}" height="${appIconSize}" fill="${background}" />`,
-    `<g color="${iconColor}" fill="${iconColor}" stroke="${iconColor}">`,
+    `<g color="${iconColor}" fill="${iconColor}" style="stroke: none !important; stroke-width: 0 !important;">`,
     identityIconSvg(settings.identity.headerIconSvg, 128, 128, 768, 768),
     "</g>",
     "</svg>"

@@ -1,6 +1,6 @@
 # Self-Hosting
 
-my quenq runs as one Node process with one SQLite database and one upload directory.
+My Quenq runs as one Node process with one SQLite database and one upload directory.
 
 ## Requirements
 

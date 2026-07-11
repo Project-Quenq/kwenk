@@ -62,6 +62,7 @@ export function Layout(props: {
             {props.styles?.map((href) => <link key={href} rel="stylesheet" href={href} />)}
             {props.head}
 
+            {/* Google Analytics */}
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-FHVE5R5GH8"></script>
             <script>{raw(`
               window.dataLayer = window.dataLayer || [];
@@ -70,6 +71,8 @@ export function Layout(props: {
               gtag('config', 'G-FHVE5R5GH8');
             `)}</script>
 
+            {/* Google AdSense */}
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9156391108980330" crossorigin="anonymous"></script>
           </head>
           <body {...props.bodyAttributes}>
             <div class="master-container" {...skinPart("shell")}>

@@ -1,3 +1,4 @@
+import { raw } from "hono/html";
 import type { SiteSettings } from "../../settings/site.js";
 import { sanitizeLinkedText } from "../../server/security/html.js";
 import { Panel } from "../../ui/panels.js";
@@ -51,11 +52,16 @@ export function AnnouncementBox({ settings }: { settings: SiteSettings }) {
   );
 }
 
-export function SourceBox() {
+export function AdBanner() {
   return (
-    <div class="source-card">
-      <p>my quenq is a nostalgic social network funded by minimal ads and user donations.</p>
-      <p><a href="/donate" class="more-details">[Support Us]</a></p>
+    <div style="margin-top: 15px; text-align: center; overflow: hidden;">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9156391108980330"
+           data-ad-slot="7238067622"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>{raw(`(adsbygoogle = window.adsbygoogle || []).push({});`)}</script>
     </div>
   );
 }

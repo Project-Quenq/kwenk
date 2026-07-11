@@ -16,10 +16,10 @@ type StaticPage = {
 const staticPages: readonly StaticPage[] = [
   {
     path: "/about",
-    title: (settings) => `About ${settings.identity.name}`,
+    title: () => "About",
     body: (settings) => (
       <>
-        <p><strong>Welcome to {settings.identity.name}.</strong></p>
+        <p><strong>Welcome to {settings.identity.name}!</strong></p>
         
         <p>Our parent site, <a href="https://quenq.com" target="_blank">Quenq.com</a>, began as a living archive of internet culture. It is a place to preserve the creativity, chaos, and nostalgia of the early web. We collected and hosted old Flash games, built simulations, and preserved web experiences of the early internet to keep them alive and accessible forever.</p>
 
@@ -27,7 +27,7 @@ const staticPages: readonly StaticPage[] = [
         
         <p>We missed the days when the web was about creativity and connecting with friends, rather than algorithms, viral trends, and AI-generated slop. Here, you can claim your piece of the retro web, build a custom HTML/CSS profile, share your favorite profile music, write blogs, and connect with a community that shares your passion.</p>
 
-        <p>Because we want to keep this space cozy, creative, and safe from spam bots, registration is currently limited to selected countries. <strong>Quenq</strong> is a passion project, funded by minimal ads and user donations, keeping us independent.</p>
+        <p>Because we want to keep this space cozy, creative, and safe from spam bots, registration is currently limited to selected countries. We're a passion project, funded by minimal ads <s>and user donations</s>, keeping us independent.</p>
         
         <p><em><strong>Under the hood:</strong> The social engine powering this community is a customized fork of <a href="https://github.com/bliish-com/bliishspace" target="_blank" rel="noopener noreferrer">Bliish.space</a>, an ultra-fast, lightweight, open-source social platform.</em></p>
       </>

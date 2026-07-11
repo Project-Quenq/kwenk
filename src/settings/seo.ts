@@ -29,7 +29,7 @@ export function siteSeoDescription(settings: SiteSettings) {
 }
 
 export function siteMarketingDescription(settings: Pick<SiteSettings, "identity">) {
-  const name = settings.identity.name.trim() || "my quenq";
+  const name = settings.identity.name.trim() || "My Quenq";
   return `${name} is a nostalgic social network inspired by the early days of the web.`;
 }
 
@@ -83,10 +83,9 @@ export function siteWebManifest(settings: SiteSettings, palette: ColorPalette) {
 export function siteSocialPreviewSvg(settings: SiteSettings, palette: ColorPalette) {
   const background = headerChromeColor(palette);
   const foreground = palette.chromeText;
-  const name = settings.identity.name || "my quenq";
-  const tagline = settings.identity.tagline || "";
+  const name = (settings.identity.name || "My Quenq").toLowerCase();
+  const tagline = (settings.identity.tagline || "Your Personal Web Space").toLowerCase();
 
-  // Scaled up to fill the empty visual space
   const nameSize = 105;
   const taglineSize = 38;
 
@@ -94,12 +93,10 @@ export function siteSocialPreviewSvg(settings: SiteSettings, palette: ColorPalet
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="${xmlAttribute(siteSocialImageAlt(settings))}">`,
     `<rect width="1200" height="630" fill="${background}" />`,
     
-    // Shifted logo slightly right (from 80 to 120) for better centering
-    `<g transform="translate(120, 165)">`,
+    `<g transform="translate(120, 171) scale(18)" color="${foreground}" fill="${foreground}">`,
     brandIconShapeSvg,
     `</g>`,
     
-    // Text block starting at X=500 (previously 480) to perfectly balance the margins
     `<text x="500" y="305" fill="${foreground}" font-family="Verdana, Arial, sans-serif" font-size="${nameSize}" font-weight="700">${xmlText(name)}</text>`,
     
     `<text x="500" y="375" fill="${foreground}" fill-opacity="0.8" font-family="Verdana, Arial, sans-serif" font-size="${taglineSize}" font-weight="400">${xmlText(tagline)}</text>`,

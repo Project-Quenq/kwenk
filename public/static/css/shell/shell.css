@@ -153,6 +153,7 @@
 .brand-link__name,
 .brand-link__tagline {
   display: block;
+  text-transform: lowercase;
 }
 
 .brand-link__tagline {

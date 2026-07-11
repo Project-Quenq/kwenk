@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { cssCustomPropertyDeclarations } from "../theme/colorPalette.js";
 
 const builtinSkinAuthor = {
-  name: "my.quenq.com",
-  url: "https://my.quenq.com"
+  name: "quenq",
+  url: "https://my.quenq.com/u/quenq"
 } as const;
 
 export type BuiltinSkinDefinition = {
@@ -176,13 +176,13 @@ export const builtinSkinDefinitions = [
   {
     sourceKey: "quenq.light",
     title: "quenq",
-    descriptionHtml: "The default my quenq light theme for profile pages.",
+    descriptionHtml: "The default light theme for profile pages.",
     codeHtml: skinCodeFromTheme(lightTheme)
   },
   {
     sourceKey: "quenq.dark",
     title: "quenq (dark)",
-    descriptionHtml: "The default my quenq dark theme for profile pages.",
+    descriptionHtml: "The default dark theme for profile pages.",
     codeHtml: skinCodeFromTheme(darkTheme)
   },
   ...builtinExampleSkins.map(exampleSkinDefinition)

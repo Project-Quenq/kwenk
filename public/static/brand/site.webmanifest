@@ -1,7 +1,7 @@
 {
-  "name": "my quenq",
-  "short_name": "my quenq",
-  "description": "Welcome to my quenq, a creative, nostalgic web community inspired by the early days of the internet. It is a quiet space to express yourself, write blogs, and connect with friends.",
+  "name": "My Quenq",
+  "short_name": "My Quenq",
+  "description": "Welcome to My Quenq, a creative, nostalgic web community inspired by the early days of the internet. It is a quiet space to express yourself, write blogs, and connect with friends.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
