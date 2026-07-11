@@ -54,7 +54,7 @@ export function AnnouncementBox({ settings }: { settings: SiteSettings }) {
 
 export function AdBanner() {
   return (
-    <div style="margin-top: 15px; text-align: center; overflow: hidden;">
+    <div style="text-align: center; overflow: hidden;">
       <ins class="adsbygoogle"
            style="display:block"
            data-ad-client="ca-pub-9156391108980330"

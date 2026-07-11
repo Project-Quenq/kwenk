@@ -16,6 +16,7 @@ import { seoText, type PageSeo } from "../../settings/seo.js";
 import { AuthorSkinStyles } from "../../skins/rendering.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
 import { LocalizedTime } from "../../ui/time.js";
+import { AdBanner } from "../home/infoPanels.js";
 
 export function BlogEntryPage(props: {
   user: CurrentUser | null;
@@ -53,8 +54,8 @@ export function BlogEntryPage(props: {
             <div class="author-details">
               <h4>Published by <MetaSubjectLink href={profilePath(props.blog.authorHandle)}>{props.blog.username}</MetaSubjectLink></h4>
               <p class="card-note">
-                  <LocalizedTime value={props.blog.createdAt} />
-                </p>
+                <LocalizedTime value={props.blog.createdAt} />
+              </p>
               <p class="content-meta-links inline-actions">
                 <a href={profileBlogPath(props.blog.authorHandle)}>
                   <Icon name="blog" /> View blog
@@ -72,12 +73,20 @@ export function BlogEntryPage(props: {
                 </a>
               </p>
             </div>
+            
+            {/* AD PLACEMENT 1: SIDEBAR AD */}
+            <AdBanner />
+            
           </div>
         </SplitPane>
         <SplitPane area="main">
           <h1 id={anchors.blog(props.blog)} class="article-title" itemprop="headline name">{props.blog.title}</h1>
           {engagementActions || managementActions ? <ActionBar className="content-actions" primary={engagementActions} secondary={managementActions} /> : null}
           <UserContent className="article-content" html={props.blog.bodyHtml} itemprop="articleBody" />
+          
+          {/* AD PLACEMENT 2: BOTTOM OF BODY AD */}
+          <AdBanner />
+          
           {props.blog.commentsEnabled ? (
             <CommentPanel
               user={props.user}
