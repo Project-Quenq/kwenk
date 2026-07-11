@@ -1,8 +1,6 @@
 export const siteSettingsTargetIds = {
   color: "color-theme",
-  contact: "contact-legal",
   home: "home-page",
-  identity: "site-identity",
   resetColor: "color-theme"
 } as const;
 

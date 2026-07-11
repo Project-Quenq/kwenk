@@ -15,6 +15,7 @@ import { plainTextFromHtml } from "../../server/security/html.js";
 import { seoText, type PageSeo } from "../../settings/seo.js";
 import { AuthorSkinStyles } from "../../skins/rendering.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
+import { LocalizedTime } from "../../ui/time.js";
 
 export function BlogEntryPage(props: {
   user: CurrentUser | null;
@@ -51,6 +52,9 @@ export function BlogEntryPage(props: {
           <div class="context-card">
             <div class="author-details">
               <h4>Published by <MetaSubjectLink href={profilePath(props.blog.authorHandle)}>{props.blog.username}</MetaSubjectLink></h4>
+              <p class="card-note">
+                  <LocalizedTime value={props.blog.createdAt} />
+                </p>
               <p class="content-meta-links inline-actions">
                 <a href={profileBlogPath(props.blog.authorHandle)}>
                   <Icon name="blog" /> View blog

@@ -9,11 +9,24 @@
   color: inherit;
 }
 
-.message-conversation-list,
+.message-conversation-list {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
 .message-thread {
   display: grid;
   gap: var(--space-5);
   min-width: 0;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: var(--space-4);
+  padding-right: var(--space-5);
+  background: var(--color-field);
+  border: var(--border-thin) solid var(--color-field-border);
+  box-shadow: var(--shadow-field);
+  border-radius: var(--radius-subtle);
 }
 
 .message-conversation {

@@ -4,48 +4,16 @@ import { limits } from "../../policy.js";
 import { ActionLabel } from "../../ui/actions.js";
 import { ColorSwatches } from "../../ui/colorSwatches.js";
 import { CsrfInput, FormActions, FormField, FormStack } from "../../ui/forms.js";
-import { SvgIcon } from "../../ui/icons.js";
 import { Panel } from "../../ui/panels.js";
 import { siteSettingsTargetIds } from "./siteSettingsTargets.js";
 
 export function SiteSettingsPanel({ colorTheme, csrf, siteSettings }: { colorTheme: BrandingSettings; csrf: string; siteSettings: SiteSettings }) {
   return (
     <>
-      <SiteIdentityPanel csrf={csrf} settings={siteSettings} />
       <HomePagePanel csrf={csrf} settings={siteSettings} />
       <RegistrationSettingsPanel csrf={csrf} settings={siteSettings} />
-      <ContactPanel csrf={csrf} settings={siteSettings} />
       <ColorThemePanel csrf={csrf} settings={colorTheme} />
     </>
-  );
-}
-
-function SiteIdentityPanel({ csrf, settings }: { csrf: string; settings: SiteSettings }) {
-  return (
-    <Panel id={siteSettingsTargetIds.identity} title="Site identity">
-      <FormStack action="/admin/branding" actionFragment={siteSettingsTargetIds.identity}>
-        <CsrfInput csrf={csrf} />
-        <input type="hidden" name="mode" value="identity" />
-        <FormField label="Site name">
-          <input type="text" name="siteName" value={settings.identity.name} required maxLength={limits.siteName} />
-        </FormField>
-        <FormField label="Header line">
-          <input type="text" name="siteTagline" value={settings.identity.tagline} maxLength={limits.siteTagline} />
-        </FormField>
-        <FormField
-          label="Header icon"
-          hint={<>Browse icons at <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer">lucide.dev/icons</a>.</>}
-        >
-          <span class="icon-field">
-            <SvgIcon svg={settings.identity.headerIconSvg} />
-            <input type="text" name="headerIcon" value={settings.identity.headerIconName} required maxLength={limits.shortText} />
-          </span>
-        </FormField>
-        <FormActions>
-          <button type="submit"><ActionLabel action="save">Save identity</ActionLabel></button>
-        </FormActions>
-      </FormStack>
-    </Panel>
   );
 }
 
@@ -83,29 +51,6 @@ function RegistrationSettingsPanel({ csrf, settings }: { csrf: string; settings:
         </FormField>
         <FormActions>
           <button type="submit"><ActionLabel action="save">Save registration rules</ActionLabel></button>
-        </FormActions>
-      </FormStack>
-    </Panel>
-  );
-}
-
-function ContactPanel({ csrf, settings }: { csrf: string; settings: SiteSettings }) {
-  return (
-    <Panel id={siteSettingsTargetIds.contact} title="Contact and legal">
-      <FormStack action="/admin/branding" actionFragment={siteSettingsTargetIds.contact}>
-        <CsrfInput csrf={csrf} />
-        <input type="hidden" name="mode" value="contact" />
-        <FormField label="Contact email">
-          <input type="email" name="contactEmail" value={settings.contact.email} maxLength={limits.emailMax} />
-        </FormField>
-        <FormField label="Company or operator name">
-          <input type="text" name="companyName" value={settings.contact.companyName} maxLength={limits.shortText} />
-        </FormField>
-        <FormField label="Mailing address">
-          <textarea name="mailingAddress" rows={4} maxLength={limits.contactAddress}>{settings.contact.mailingAddress}</textarea>
-        </FormField>
-        <FormActions>
-          <button type="submit"><ActionLabel action="save">Save contact</ActionLabel></button>
         </FormActions>
       </FormStack>
     </Panel>

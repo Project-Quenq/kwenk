@@ -6,6 +6,7 @@ import { plainTextFromHtml } from "../../server/security/html.js";
 import { Layout, PageFrame, type PageSeo } from "../../shell/index.js";
 import { truncateText } from "../../text.js";
 import { MetaSubjectLink } from "../../ui/meta.js";
+import { LocalizedTime } from "../../ui/time.js";
 
 export function BlogListPage(props: { user: CurrentUser | null; title: string; blogs: BlogListItem[]; seo?: PageSeo }) {
   return (
@@ -31,7 +32,13 @@ function BlogCard(props: { blog: BlogListItem }) {
   return (
     <div class="content-card">
       <h3><a href={blogPath(blog)}>{blog.title}</a> <small class="blog-card__category">{blog.category ?? defaultBlogCategory}</small></h3>
-      {blog.username && blog.authorHandle ? <p class="card-attribution">By <MetaSubjectLink href={profilePath(blog.authorHandle)}>{blog.username}</MetaSubjectLink></p> : null}
+      {blog.username && blog.authorHandle ? (
+        <p class="card-attribution">
+          By <MetaSubjectLink href={profilePath(blog.authorHandle)}>{blog.username}</MetaSubjectLink>
+          {" · "}
+          <LocalizedTime value={blog.createdAt} />
+        </p>
+      ) : null}
       <p>{truncateText(plainTextFromHtml(blog.bodyHtml), 180)}</p>
     </div>
   );

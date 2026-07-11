@@ -32,25 +32,28 @@ export type SiteSettings = {
 };
 
 export const defaultHeaderIconName = "brand";
-
 export const defaultHeaderIconSvg = brandIconSvg;
 
+export const siteIdentity: SiteIdentitySettings = {
+  name: "My Quenq",
+  tagline: "Your Personal Web Space",
+  headerIconName: defaultHeaderIconName,
+  headerIconSvg: defaultHeaderIconSvg
+};
+
+export const siteContact: SiteContactSettings = {
+  email: "support@quenq.com",
+  companyName: "Quenq",
+  mailingAddress: ""
+};
+
 export const defaultSiteSettings = {
-  identity: {
-    name: "My Quenq",
-    tagline: "Your Personal Web Space",
-    headerIconName: defaultHeaderIconName,
-    headerIconSvg: defaultHeaderIconSvg
-  },
+  identity: siteIdentity,
   home: {
     announcement: "Claim your unique handle, design your profile page with custom HTML/CSS, and join our quiet corner of the retro web, free from feed algorithms and AI slop.",
     welcomeText: "Welcome to My Quenq, a creative, nostalgic web community inspired by the early days of the internet. It is a quiet space to express yourself, write blogs, and connect with friends."
   },
-  contact: {
-    email: "support@quenq.com",
-    companyName: "Quenq",
-    mailingAddress: ""
-  },
+  contact: siteContact,
   registration: {
     blockedCountries: ""
   },

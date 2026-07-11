@@ -12,6 +12,7 @@ import { Panel } from "../../ui/panels.js";
 import { LocalizedTime } from "../../ui/time.js";
 import { UserContent } from "../../ui/userContent.js";
 import type { MessageParticipant } from "./types.js";
+import { raw } from "hono/html";
 
 export function ConversationThread(props: {
   csrf: string;
@@ -44,6 +45,16 @@ export function ConversationThread(props: {
           <MessageEntry key={message.id} csrf={props.csrf} message={message} viewerId={props.viewerId} />
         )) : <p><i>No messages in this conversation.</i></p>}
       </div>
+
+      <script>{raw(`
+        (function() {
+          const thread = document.querySelector('.message-thread');
+          if (thread) {
+            thread.scrollTop = thread.scrollHeight;
+          }
+        })();
+      `)}</script>
+
       <PaginationNav nextHref={props.nextHref} nextLabel="Older messages" resetHref={props.resetHref} resetLabel="Newest messages" />
       <ReplyForm
         body={props.replyBody}
