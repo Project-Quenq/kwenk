@@ -37,13 +37,13 @@ const lightTheme = {
   chrome: "#43515e",
   chromeText: "#ffffff",
   colorScheme: "light",
-  link: "#2d353e",
-  linkHover: "color-mix(in srgb, #2d353e 68%, #1a1a1a)",
+  link: "#5c6f82",
+  linkHover: "color-mix(in srgb, #5c6f82 68%, #1a1a1a)",
   muted: "#5c6f82",
   page: "#ffffff",
   pageText: "#1a1a1a",
   surface: "#ffffff",
-  surfaceLinkHover: "color-mix(in srgb, #2d353e 68%, #1a1a1a)",
+  surfaceLinkHover: "color-mix(in srgb, #5c6f82 68%, #1a1a1a)",
   surfaceText: "#1a1a1a"
 } satisfies BuiltinSkinTheme;
 

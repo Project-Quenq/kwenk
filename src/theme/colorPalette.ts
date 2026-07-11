@@ -21,7 +21,7 @@ export const defaultColorPalette = {
   chromeText: "#ffffff",
   accent: "#43515e",
   accentText: "#ffffff",
-  link: "#2d353e",
+  link: "#5c6f82",
   backdrop: "#e2e7ec",
   page: "#ffffff",
   surface: "#ffffff"

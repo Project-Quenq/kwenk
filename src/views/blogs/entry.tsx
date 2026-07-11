@@ -73,11 +73,11 @@ export function BlogEntryPage(props: {
                 </a>
               </p>
             </div>
-            
-            {/* AD PLACEMENT 1: SIDEBAR AD */}
-            <AdBanner />
-            
           </div>
+          
+          {/* AD PLACEMENT 1: SIDEBAR AD */}
+          <AdBanner />
+          
         </SplitPane>
         <SplitPane area="main">
           <h1 id={anchors.blog(props.blog)} class="article-title" itemprop="headline name">{props.blog.title}</h1>
