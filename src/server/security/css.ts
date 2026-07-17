@@ -66,7 +66,7 @@ function sanitizeCssBlock(css: string, nest:number) {
 
 function indentBlock(prelude:string, block:string, indent:number){
   const preludeIndent = indentSpacingCharacter.repeat(indent - 1);
-  return prelude ? `${preludeIndent}${prelude}{${block}${preludeIndent}}\n` : "";
+  return prelude ? `${preludeIndent}${prelude}{\n${block}${preludeIndent}}\n` : "";
 }
 
 function sanitizeInnerBlock(prelude:string, body:string, indent:number){
@@ -77,12 +77,12 @@ function sanitizeInnerBlock(prelude:string, body:string, indent:number){
 
     if (lower.startsWith("@media") && /^@media[-a-zA-Z0-9\s:().,%/]+$/.test(prelude)){
       const nested = sanitizeCssBlock(body, indent + 1);
-      return nested ? indentBlock(prelude, body, indent) : "";
+      return nested ? indentBlock(prelude, nested, indent) : "";
     }
 
     if (lower.startsWith("@keyframes") && /^@keyframes\s+[-_a-zA-Z0-9]+$/.test(prelude)) {
       const nested = sanitizeKeyframes(body, indent + 1);
-      return nested ? indentBlock(prelude, body, indent) : "";
+      return nested ? indentBlock(prelude, nested, indent) : "";
     }
 
     // invalid @ rule
@@ -92,7 +92,7 @@ function sanitizeInnerBlock(prelude:string, body:string, indent:number){
   else {
     if(!isSafeSelector(prelude)) return "";
     let declarations = sanitizeDeclarations(body, indent);
-    return declarations ? indentBlock(prelude, body, indent) : "";
+    return declarations ? indentBlock(prelude, declarations, indent) : "";
   }
 }
 
@@ -189,7 +189,7 @@ function sanitizeDeclarations(body: string, indent:number) {
     const value = declaration.slice(colon + 1).trim();
     if (!isSafeCssProperty(property)) return "";
     const safeValue = sanitizeCssValue(property, value);
-    return safeValue ? `${property}:${safeValue};\n` : "";
+    return safeValue ? `${indentSpacingCharacter.repeat(indent)}${property}:${safeValue};\n` : "";
   }).join("");
 }
 

@@ -24,7 +24,7 @@
     "@node-rs/argon2": "2.0.2",
     "better-sqlite3": "12.10.0",
     "countries-and-timezones": "^3.9.0",
-    "hono": "4.12.19",
+    "hono": "^4.12.30",
     "lucide-static": "1.16.0",
     "sanitize-html": "2.17.4",
     "sharp": "0.34.5",
@@ -36,5 +36,10 @@
     "@types/sanitize-html": "2.16.1",
     "tsx": "4.22.2",
     "typescript": "6.0.3"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.10.0": true,
+    "sharp@0.34.5": true,
+    "esbuild@0.28.1": true
   }
 }
