@@ -8,14 +8,17 @@ const skinVersionSelectorPattern = new RegExp(skinVersionSelectorSource);
 const skinVersionSelectorGlobalPattern = new RegExp(skinVersionSelectorSource, "g");
 const importRulePattern = /@import\s+(?:url\(\s*(?:"([^"]+)"|'([^']+)'|([^)\s]+))\s*\)|"([^"]+)"|'([^']+)'|([^;\s]+))[^;]*;/gi;
 
+// define here the indentation per block
+const indentSpacingCharacter = "\t";
+
 export function sanitizeInlineStyle(input: string) {
-  return sanitizeDeclarations(input);
+  return sanitizeDeclarations(input, 0);
 }
 
 export function sanitizeStyleBlocks(input: string) {
   return input.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, (_match, css: string) => {
     const sanitized = sanitizeSkinCss(css);
-    return sanitized ? `<style>${sanitized}</style>` : "";
+    return sanitized ? `<style>\n${sanitized}</style>` : "";
   });
 }
 
@@ -34,12 +37,13 @@ function sanitizeSkinCss(input: string) {
     .replace(/<\/?style\b[^>]*>/gi, "")
     .replace(/[<>]/g, "");
 
-  return `${imports.join("\n")}${imports.length ? "\n" : ""}${sanitizeCssBlock(css)}`.trim();
+  return `${imports.join("\n")}${imports.length ? "\n" : ""}${sanitizeCssBlock(css, 1)}`;
 }
 
-function sanitizeCssBlock(css: string) {
+function sanitizeCssBlock(css: string, nest:number) {
   // This accepts simple balanced CSS rule blocks and drops malformed trailing
   // input instead of trying to repair ambiguous CSS.
+
   let output = "";
   let index = 0;
 
@@ -52,7 +56,7 @@ function sanitizeCssBlock(css: string) {
     if (close === -1) break;
 
     const body = css.slice(open + 1, close);
-    const rule = prelude.startsWith("@") ? sanitizeAtRule(prelude, body) : sanitizeStyleRule(prelude, body);
+    const rule = sanitizeInnerBlock(prelude, body, nest);
     if (rule) output += rule;
     index = close + 1;
   }
@@ -60,26 +64,36 @@ function sanitizeCssBlock(css: string) {
   return output;
 }
 
-function sanitizeAtRule(prelude: string, body: string) {
-  const lower = prelude.toLowerCase();
-
-  if (lower.startsWith("@media") && /^@media[-a-zA-Z0-9\s:().,%/]+$/.test(prelude)) {
-    const nested = sanitizeCssBlock(body);
-    return nested ? `${prelude}{${nested}}` : "";
-  }
-
-  if (lower.startsWith("@keyframes") && /^@keyframes\s+[-_a-zA-Z0-9]+$/.test(prelude)) {
-    const nested = sanitizeKeyframes(body);
-    return nested ? `${prelude}{${nested}}` : "";
-  }
-
-  return "";
+function indentBlock(prelude:string, block:string, indent:number){
+  const preludeIndent = indentSpacingCharacter.repeat(indent - 1);
+  return prelude ? `${preludeIndent}${prelude}{${block}${preludeIndent}}\n` : "";
 }
 
-function sanitizeStyleRule(selector: string, body: string) {
-  if (!isSafeSelector(selector)) return "";
-  const declarations = sanitizeDeclarations(body);
-  return declarations ? `${selector}{${declarations}}` : "";
+function sanitizeInnerBlock(prelude:string, body:string, indent:number){
+  // sanitizeAtRule
+  if(prelude.startsWith("@")){
+    // do media or keyframes
+    const lower = prelude.toLowerCase();
+
+    if (lower.startsWith("@media") && /^@media[-a-zA-Z0-9\s:().,%/]+$/.test(prelude)){
+      const nested = sanitizeCssBlock(body, indent + 1);
+      return nested ? indentBlock(prelude, body, indent) : "";
+    }
+
+    if (lower.startsWith("@keyframes") && /^@keyframes\s+[-_a-zA-Z0-9]+$/.test(prelude)) {
+      const nested = sanitizeKeyframes(body, indent + 1);
+      return nested ? indentBlock(prelude, body, indent) : "";
+    }
+
+    // invalid @ rule
+    return "";
+  }
+  // sanitizeStyleRule
+  else {
+    if(!isSafeSelector(prelude)) return "";
+    let declarations = sanitizeDeclarations(body, indent);
+    return declarations ? indentBlock(prelude, body, indent) : "";
+  }
 }
 
 function isSafeSelector(selector: string) {
@@ -141,7 +155,7 @@ function normalizeSupportedSkinSelectors(selector: string) {
     });
 }
 
-function sanitizeKeyframes(css: string) {
+function sanitizeKeyframes(css: string, indent:number) {
   let output = "";
   let index = 0;
 
@@ -153,8 +167,9 @@ function sanitizeKeyframes(css: string) {
     const close = matchingBrace(css, open);
     if (close === -1) break;
 
-    const declarations = isSafeKeyframeSelector(selector) ? sanitizeDeclarations(css.slice(open + 1, close)) : "";
-    if (declarations) output += `${selector}{${declarations}}`;
+    const body = css.slice(open + 1, close);
+    const declarations = isSafeKeyframeSelector(selector) ? sanitizeDeclarations(body, indent) : "";
+    if(declarations) output += indentBlock(selector, declarations, indent);
     index = close + 1;
   }
 
@@ -165,19 +180,17 @@ function isSafeKeyframeSelector(selector: string) {
   return /^(from|to|(?:100|[1-9]?[0-9])(?:\.\d+)?%)$/i.test(selector);
 }
 
-function sanitizeDeclarations(input: string) {
-  return splitDeclarations(input)
-    .map((declaration) => {
-      const colon = declaration.indexOf(":");
-      if (colon === -1) return "";
-
-      const property = declaration.slice(0, colon).trim().toLowerCase();
-      const value = declaration.slice(colon + 1).trim();
-      if (!isSafeCssProperty(property)) return "";
-      const safeValue = sanitizeCssValue(property, value);
-      return safeValue ? `${property}:${safeValue};` : "";
-    })
-    .join("");
+function sanitizeDeclarations(body: string, indent:number) {
+  // sanitize a css declarations
+  return splitDeclarations(body).map(declaration => {
+    const colon = declaration.indexOf(":");
+    if (colon === -1) return "";
+    const property = declaration.slice(0, colon).trim().toLowerCase();
+    const value = declaration.slice(colon + 1).trim();
+    if (!isSafeCssProperty(property)) return "";
+    const safeValue = sanitizeCssValue(property, value);
+    return safeValue ? `${property}:${safeValue};\n` : "";
+  }).join("");
 }
 
 function splitDeclarations(input: string) {
