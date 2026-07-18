@@ -4,7 +4,8 @@
   word-break: break-word;
 }
 
-.page-frame > .content-card {
+.page-frame > .content-card,
+.split-layout__pane .content-card {
   background: var(--color-brand-soft);
   border: var(--border-thin) solid var(--surface-border);
   border-radius: var(--radius-panel);

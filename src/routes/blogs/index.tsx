@@ -62,7 +62,7 @@ export function registerBlogRoutes(app: Hono<AppBindings>) {
     return c.html(
       <BlogListPage
         user={user}
-        title={`Blog category: ${category}`}
+        title={`Blogs in ${category}`}
         blogs={blogsByCategory(category, user)}
         seo={{
           canonicalPath: `/blog/category/${encodeURIComponent(category)}`,
