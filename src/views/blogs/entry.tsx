@@ -74,17 +74,13 @@ export function BlogEntryPage(props: {
               </p>
             </div>
           </div>
-          
-          {/* AD PLACEMENT 1: SIDEBAR AD */}
-          <AdBanner />
-          
+          <AdBanner />  
         </SplitPane>
         <SplitPane area="main">
           <h1 id={anchors.blog(props.blog)} class="article-title" itemprop="headline name">{props.blog.title}</h1>
           {engagementActions || managementActions ? <ActionBar className="content-actions" primary={engagementActions} secondary={managementActions} /> : null}
           <UserContent className="article-content" html={props.blog.bodyHtml} itemprop="articleBody" />
           
-          {/* AD PLACEMENT 2: BOTTOM OF BODY AD */}
           <AdBanner />
           
           {props.blog.commentsEnabled ? (

@@ -17,7 +17,7 @@ export function LocalizedTime(props: { value: string }) {
   const datetime = normalizeTimestamp(props.value);
   const timeZone = currentDisplayTimeZone();
 
-  return <time class="timestamp" datetime={datetime} title={formatTimestamp(datetime, props.value, defaultTimeZone)}>{formatTimestamp(datetime, props.value, timeZone)}</time>;
+  return <time class="timestamp" datetime={datetime} title={formatTimestamp(datetime, props.value, timeZone)}>{formatTimestamp(datetime, props.value, timeZone)}</time>;
 }
 
 function normalizeTimestamp(value: string) {
@@ -63,10 +63,9 @@ function formatDateTime(date: Date, timeZone: string) {
     month: "short",
     day: "numeric",
     year: "numeric",
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
-    hourCycle: "h23",
-    timeZoneName: "short"
+    hour12: true
   }).formatToParts(date);
 
   const month = part(parts, "month");
@@ -74,10 +73,10 @@ function formatDateTime(date: Date, timeZone: string) {
   const year = part(parts, "year");
   const hour = part(parts, "hour");
   const minute = part(parts, "minute");
-  const zoneName = part(parts, "timeZoneName");
+  const dayPeriod = part(parts, "dayPeriod");
 
-  if (!month || !day || !year || !hour || !minute || !zoneName) return date.toISOString();
-  return `${month} ${day}, ${year} ${timestampSeparator} ${hour}:${minute} ${zoneName}`;
+  if (!month || !day || !year || !hour || !minute || !dayPeriod) return date.toISOString();
+  return `${month} ${day}, ${year} ${timestampSeparator} ${hour}:${minute} ${dayPeriod}`;
 }
 
 function part(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes) {

@@ -9,6 +9,7 @@ import { MetaSubjectLink } from "../../ui/meta.js";
 import { LocalizedTime } from "../../ui/time.js";
 import { sqlite } from "../../server/db/client.js";
 import { ActionLabel } from "../../ui/actions.js";
+import { AdBanner } from "../home/infoPanels.js";
 
 export function BlogListPage(props: { user: CurrentUser | null; title: string; blogs: BlogListItem[]; seo?: PageSeo }) {
   const currentCategory = props.title.startsWith("Blogs in ") ? props.title.replace("Blogs in ", "") : null;
@@ -67,6 +68,7 @@ export function BlogListPage(props: { user: CurrentUser | null; title: string; b
                 })}
               </ul>
             </div>
+            <AdBanner />
           </SplitPane>
 
           <SplitPane area="main">
