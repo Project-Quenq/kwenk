@@ -93,7 +93,7 @@ function addNotificationActor(group: NotificationGroup, item: NotificationItem) 
 function notificationGroupKey(item: NotificationItem) {
   if (item.kind === notificationKinds.favorite) return `${item.kind}:favorites`;
   if (item.kind === notificationKinds.wallPost) return `${item.kind}:${item.subjectId}`;
-  if (item.kind === notificationKinds.friendAccepted) return `${item.kind}:${item.actorId}`;
+  if (item.kind === notificationKinds.friendAccepted || item.kind === notificationKinds.friendRequest) return `${item.kind}:${item.actorId}`;
   return `${item.kind}:${item.contextType}:${item.contextId}`;
 }
 
@@ -122,6 +122,7 @@ function notificationHref(item: NotificationItem) {
       return commentAnchor ? `/arcade/${slug}${commentAnchor}` : `/arcade/${slug}`;
     }
     case "user":
+      if (item.kind === notificationKinds.friendRequest) return "/requests";
       return profilePath(item.actorHandle);
   }
 }
@@ -137,6 +138,7 @@ function notificationContextLabel(item: NotificationItem) {
     case "game":
       return item.contextTitle ? `Game: ${item.contextTitle}` : "View arcade game";
     case "user":
+      if (item.kind === notificationKinds.friendRequest) return "View friend requests";
       return "View profile";
   }
 }

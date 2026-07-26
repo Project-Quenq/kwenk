@@ -12,7 +12,7 @@ import {
   sentRequestsFor,
   unblockUser
 } from "../../server/db/relationships.js";
-import { notifyFriendAccepted } from "../../server/db/notifications/index.js";
+import { notifyFriendAccepted, notifyFriendRequested } from "../../server/db/notifications/index.js";
 import { listUsersPage } from "../../server/db/users.js";
 import { field } from "../../server/forms.js";
 import { formAction, formId, localBack, verifiedActionForm } from "../../server/http.js";
@@ -31,7 +31,12 @@ type BlockActionName = "block" | "unblock";
 const friendActions = {
   add: ({ c, user, id }: RelationshipActionInput) => {
     visibleProfile(c, id);
-    if (requestFriend(user.id, id) === "accepted") notifyFriendAccepted(user.id, id);
+    const status = requestFriend(user.id, id);
+    if (status === "accepted") {
+      notifyFriendAccepted(user.id, id);
+    } else if (status === "requested") {
+      notifyFriendRequested(user.id, id);
+    }
   },
   accept: ({ user, id }: RelationshipActionInput) => {
     if (acceptFriend(id, user.id)) notifyFriendAccepted(user.id, id);

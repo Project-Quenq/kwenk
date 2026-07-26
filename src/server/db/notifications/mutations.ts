@@ -30,6 +30,10 @@ export function notifyFriendAccepted(actorId: number, recipientId: number) {
   return notifyUserEvent(actorId, recipientId, notificationKinds.friendAccepted, notificationPreferenceTypes.friendAccepts);
 }
 
+export function notifyFriendRequested(actorId: number, recipientId: number) {
+  return notifyUserEvent(actorId, recipientId, notificationKinds.friendRequest, notificationPreferenceTypes.friendAccepts);
+}
+
 export function markVisibleNotificationsRead(viewer: CurrentUser) {
   sqlite
     .prepare(

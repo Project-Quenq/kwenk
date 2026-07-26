@@ -482,7 +482,7 @@ function ensureNotificationsSchemaUpToDate() {
     .prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='notifications'")
     .get() as { sql: string } | undefined;
 
-  if (row && (!row.sql.includes("game_comment_reply") || !row.sql.includes("'game'"))) {
+  if (row && (!row.sql.includes("game_comment_reply") || !row.sql.includes("'game'") || !row.sql.includes("friend_request"))) {
     sqlite.transaction(() => {
       sqlite.exec("DROP TRIGGER IF EXISTS notifications_wall_posts_insert;");
       sqlite.exec("DROP TRIGGER IF EXISTS notifications_posts_delete;");

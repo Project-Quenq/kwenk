@@ -5,6 +5,7 @@ export const notificationKinds = {
   blogProp: "blog_prop",
   favorite: "favorite",
   friendAccepted: "friend_accepted",
+  friendRequest: "friend_request",
   postComment: "post_comment",
   postCommentFollowed: "post_comment_followed",
   postCommentReply: "post_comment_reply",
@@ -21,7 +22,6 @@ export const notificationKindNames = Object.values(notificationKinds);
 export type NotificationKind = (typeof notificationKindNames)[number];
 
 export const notificationPreferenceTypes = {
-  // Stored as wall_comments for compatibility with existing preference rows.
   comments: "wall_comments",
   favorites: "favorites",
   friendAccepts: "friend_accepts",
@@ -54,6 +54,7 @@ export const notificationTextByKind = {
   [notificationKinds.blogProp]: "gave props to your blog entry.",
   [notificationKinds.favorite]: "added you to favorites.",
   [notificationKinds.friendAccepted]: "accepted your friend request.",
+  [notificationKinds.friendRequest]: "sent you a friend request.",
   [notificationKinds.postComment]: "commented on your post.",
   [notificationKinds.postCommentFollowed]: "commented on a post you commented on.",
   [notificationKinds.postCommentReply]: "replied to your comment.",
