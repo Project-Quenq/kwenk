@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./public/static/brand/favicon.svg" alt="quenq icon" width="96" height="96">
-  <h1>my quenq</h1>
-  <p><em>your personal web space</em></p>
+  <h1>quenq.com</h1>
+  <p><em>make the web yours</em></p>
 </div>
 
 ## Quick Start
@@ -27,7 +27,7 @@ pnpm build
 
 ## Default Brand Assets
 
-Default My Quenq favicon, social preview, app icon, and manifest files are generated from the same settings-derived asset helpers used by the runtime branding routes.
+Default Quenq favicon, social preview, app icon, and manifest files are generated from the same settings-derived asset helpers used by the runtime branding routes.
 
 ```bash
 pnpm assets:brand
@@ -83,7 +83,7 @@ docs/            operator and security notes
 
 ## License
 
-My Quenq is licensed under [GPL-3.0-only](LICENSE). Official license text: [gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html).
+Quenq is licensed under [GPL-3.0-only](LICENSE). Official license text: [gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html).
 
 ## Documentation
 

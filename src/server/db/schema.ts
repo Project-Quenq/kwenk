@@ -435,6 +435,48 @@ CREATE TABLE IF NOT EXISTS automod_rules (
 );
 CREATE INDEX IF NOT EXISTS automod_rules_enabled_idx ON automod_rules(enabled, scope);
 CREATE INDEX IF NOT EXISTS automod_rules_updated_idx ON automod_rules(updated_at);
+
+-- PROJECT QUENQ ADDITIONS --
+
+CREATE TABLE IF NOT EXISTS arcade_games (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  url TEXT NOT NULL UNIQUE,
+  thumbnail TEXT NOT NULL,
+  description TEXT NOT NULL,
+  genres_json TEXT NOT NULL DEFAULT '[]',
+  width INTEGER NOT NULL,
+  height INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS arcade_games_url_idx ON arcade_games(url);
+
+CREATE TABLE IF NOT EXISTS game_comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  game_id INTEGER NOT NULL REFERENCES arcade_games(id) ON DELETE CASCADE,
+  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  text_html TEXT NOT NULL,
+  parent_id INTEGER REFERENCES game_comments(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS game_comments_game_idx ON game_comments(game_id);
+CREATE INDEX IF NOT EXISTS game_comments_game_created_idx ON game_comments(game_id, created_at);
+
+CREATE TABLE IF NOT EXISTS game_props (
+  game_id INTEGER NOT NULL REFERENCES arcade_games(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (game_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS game_props_user_idx ON game_props(user_id, created_at);
+
+CREATE TRIGGER IF NOT EXISTS notifications_game_comments_delete
+AFTER DELETE ON game_comments
+BEGIN
+  DELETE FROM notifications
+  WHERE subject_type = 'game_comment' AND subject_id = OLD.id;
+END;
 `;
 
 export function initializeDatabase() {

@@ -13,21 +13,23 @@ export const pageLinks = {
   props: { label: "Props", href: "/props" },
   search: { label: "Search", href: "/search" },
   settings: { label: "Account settings", href: "/settings" },
-  skins: { label: "Skins", href: "/skins" }
+  skins: { label: "Skins", href: "/skins" },
+  arcade: { label: "Arcade", href: "/arcade" },
+  apps: { label: "Apps", href: "/apps" }
 } as const;
 
 export type PageLinkKey = keyof typeof pageLinks;
 
 export const mainNavPageOrder = [
   "home",
+  "arcade",
+  "apps",
   "feed",
   "messages",
   "groups",
   "browse",
-  "search",
   "blog",
   "skins",
   "favorites",
-  "props",
-  "about"
+  "props"
 ] as const satisfies readonly PageLinkKey[];

@@ -48,6 +48,17 @@ const commentConfigs = {
     ownerKind: notificationKinds.skinComment,
     followedKind: notificationKinds.skinCommentFollowed,
     replyKind: notificationKinds.skinCommentReply
+  },
+  game: {
+    table: "game_comments",
+    column: "game_id",
+    ownerJoin: "JOIN arcade_games owner ON owner.id = c.game_id",
+    ownerSelect: "NULL AS ownerId",
+    contextType: "game",
+    subjectType: "game_comment",
+    ownerKind: notificationKinds.gameCommentReply, // Fallback placeholder, skipped dynamically
+    followedKind: notificationKinds.gameCommentFollowed,
+    replyKind: notificationKinds.gameCommentReply
   }
 } as const;
 
@@ -64,6 +75,10 @@ export function notifyBlogComment(commentId: number) {
 
 export function notifySkinComment(commentId: number) {
   return notifyComment("skin", commentId);
+}
+
+export function notifyGameComment(commentId: number) {
+  return notifyComment("game", commentId);
 }
 
 function notifyComment(target: CommentNotificationTarget, commentId: number) {
@@ -136,5 +151,5 @@ function commenterIdsBefore(config: CommentConfig, contextId: number, beforeComm
         WHERE ${config.column} = ? AND id < ?`
       )
       .all(contextId, beforeCommentId) as Array<{ recipientId: number }>
-  ).map((row) => row.recipientId);
+    ).map((row) => row.recipientId);
 }

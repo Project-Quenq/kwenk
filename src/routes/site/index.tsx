@@ -4,7 +4,7 @@ import { siteSettings } from "../../server/db/siteSettings.js";
 import { siteMarketingDescription, type PageSeo } from "../../settings/seo.js";
 import { plainPage } from "../../server/render.js";
 import type { AppBindings } from "../../server/context.js";
-import type { ViewChild } from "../../ui/types.js";
+import { raw } from "hono/html";
 
 type StaticPage = {
   path: string;
@@ -16,20 +16,61 @@ type StaticPage = {
 const staticPages: readonly StaticPage[] = [
   {
     path: "/about",
-    title: () => "About",
-    body: (settings) => (
+    title: () => "About Quenq",
+    body: () => (
       <>
-        <p><strong>Welcome to {settings.identity.name}!</strong></p>
-        
-        <p>Our parent site, <a href="https://quenq.com" target="_blank">Quenq.com</a>, began as a living archive of internet culture. It is a place to preserve the creativity, chaos, and nostalgia of the early web. We collected and hosted old Flash games, built simulations, and preserved web experiences of the early internet to keep them alive and accessible forever.</p>
+        <p><strong>Welcome to Quenq!</strong> We are a nostalgic social network and digital community dedicated to bringing the human element back to the web.</p>
 
-        <p>But preservation was not enough. We realized that what made the old web truly special was the people. That is why we created <strong>{settings.identity.name}</strong>, bringing the human element back to the internet.</p>
-        
-        <p>We missed the days when the web was about creativity and connecting with friends, rather than algorithms, viral trends, and AI-generated slop. Here, you can claim your piece of the retro web, build a custom HTML/CSS profile, share your favorite profile music, write blogs, and connect with a community that shares your passion.</p>
+        <p>We missed the days when the internet was about creativity, expression, and connecting with friends, rather than algorithms, viral trends, and AI-generated slop. Here, you can claim your piece of the retro web, build a custom HTML/CSS profile page, share your favorite profile music, write blogs, and connect with a community that shares your passion.</p>
 
-        <p>Because we want to keep this space cozy, creative, and safe from spam bots, registration is currently limited to selected countries. We're a passion project, funded by minimal ads <s>and user donations</s>, keeping us independent.</p>
-        
-        <p><em><strong>Under the hood:</strong> The social engine powering this community is a customized fork of <a href="https://github.com/bliish-com/bliishspace" target="_blank" rel="noopener noreferrer">Bliish.space</a>, an ultra-fast, lightweight, open-source social platform.</em></p>
+        <p>Alongside our social network, Quenq is also home to an interactive digital library. Directly in your browser, you can explore preserved software, run classic operating system simulations like <i>Reborn XP</i>, and play an extensive library of classic Flash arcade games.</p>
+
+        <h2>What You Can Do Here</h2>
+        <ul>
+          <li style="margin-bottom: 10px;"><strong>Custom Social Profiles:</strong> Express yourself freely with custom HTML/CSS profiles, status updates, music players, wall posts, blogs, and community groups.</li>
+          <li style="margin-bottom: 10px;"><strong>The Arcade:</strong> Play over 1,300 classic Flash browser games, preserved using modern WebAssembly emulation so they run natively without plugins or downloads.</li>
+          <li style="margin-bottom: 10px;"><strong>The Apps:</strong> Launch internet artifacts, games and simulators like <i>Reborn XP</i> (our 1:1 Windows XP recreation), console emulators, and web pranks.</li>
+        </ul>
+
+        <h2>The Name & Symmetry</h2>
+        <p>When the domain was registered, "quenq" was chosen simply because it is visually and structurally perfect. It is completely symmetrical: the two <strong>q</strong>s act as bookends, the <strong>u</strong> and <strong>n</strong> are upside-down reflections of each other, and they are anchored by the <strong>e</strong> in the center.</p>
+
+        <h2>Support & Community</h2>
+        <p>Quenq is an independent passion project funded by minimal on-site advertising to keep the platform 100% free for everyone, without paywalls or subscriptions. Registration is currently limited to selected regions to protect the community from spam bots and maintain a cozy, high-quality environment.</p>
+
+        <p>Our direction is heavily shaped by our users. Many of the features, artifacts and games available on the site exist because a member suggested them here or in our Discord server.</p>
+
+        <div style="text-align: center; display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
+          <a href="https://dsc.gg/quenq" target="_blank" class="button">Join our Discord</a>
+          <a href="/signup" class="button button--secondary">Create an account</a>
+        </div>
+
+        <div id="aero-ring">
+          <script src="https://frutigeraeroarchive.org/javascript/aero-webring.js"></script>
+        </div>
+
+        <style>{raw(`
+          #aero-ring {
+            background: linear-gradient(to bottom, #404040 0%, #000000 100%);
+            border-radius: 10px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5),
+              inset 0 2px 1px rgba(255, 255, 255, 0.15),
+              inset 0 -2px 1px rgba(0, 0, 0, 0.35);
+            font-family: sans-serif;
+            margin: 20px auto 0px auto;
+            max-width: 15rem;
+            padding: 0.75rem;
+            text-align: center;
+          }
+
+          #aero-ring a, #aero-ring a:visited {
+            color: white !important;
+          }
+
+          #aero-ring a:focus, #aero-ring a:hover, #aero-ring a:active {
+            color: lightgrey !important;
+          }
+        `)}</style>
       </>
     )
   },

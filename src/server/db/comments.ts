@@ -22,6 +22,12 @@ const targets = {
     column: "skin_id",
     ownerJoin: "JOIN skins owner ON owner.id = c.skin_id",
     ownerSelect: "owner.author_id AS ownerId"
+  },
+  game: {
+    table: "game_comments",
+    column: "game_id",
+    ownerJoin: "JOIN arcade_games owner ON owner.id = c.game_id",
+    ownerSelect: "NULL AS ownerId"
   }
 } as const;
 

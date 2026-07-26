@@ -9,6 +9,7 @@ import { canViewMessage } from "../../server/db/messages/index.js";
 import { createReport } from "../../server/db/moderation/index.js";
 import { commentTargetForSubject, getModerationSubject } from "../../server/db/moderation/subjects.js";
 import { getVisiblePost } from "../../server/db/posts/index.js";
+import { getGameById } from "../../server/db/arcade.js";
 import { field } from "../../server/forms.js";
 import { badFormRequestMessage, optionalId, optionalReportSubjectType, requiredReportSubjectType, requiredUserText, verifiedActionForm } from "../../server/http.js";
 import { limits, type ReportSubjectType } from "../../policy.js";
@@ -93,6 +94,11 @@ function assertReportSubject(c: AppContext, user: CurrentUser, subjectType: Repo
     case "message":
       if (!canViewMessage(user.id, subjectId)) throw new HTTPException(404, { message: "Report subject not found." });
       return;
+    case "game": {
+      const game = getGameById(subjectId, user.id);
+      if (!game) throw new HTTPException(404, { message: "Report subject not found." });
+      return;
+    }
     default:
       throw new HTTPException(400, { message: "Unknown report subject." });
   }

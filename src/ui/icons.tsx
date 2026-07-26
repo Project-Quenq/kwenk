@@ -28,10 +28,12 @@ import SunIcon from "lucide-static/dist/esm/icons/sun.mjs";
 import UploadIcon from "lucide-static/dist/esm/icons/upload.mjs";
 import UserIcon from "lucide-static/dist/esm/icons/user.mjs";
 import UserMinusIcon from "lucide-static/dist/esm/icons/user-minus.mjs";
+import FullScreenIcon from "lucide-static/dist/esm/icons/fullscreen.mjs";
+import ExternalLinkIcon from "lucide-static/dist/esm/icons/external-link.mjs";
 import { brandIconSvg } from "../brand.js";
 import { trustedHtml } from "./html.js";
 
-export type IconName = "add" | "audit" | "avatar" | "blog" | "brand" | "check" | "comment" | "database" | "delete" | "edit" | "email" | "favorite" | "forward" | "group" | "link" | "lock" | "message" | "moon" | "notifications" | "prop" | "rate-limit" | "refresh" | "reply" | "report" | "save" | "search" | "send" | "settings" | "sun" | "unlock" | "upload" | "user" | "user-minus";
+export type IconName = "add" | "audit" | "avatar" | "blog" | "brand" | "check" | "comment" | "database" | "delete" | "edit" | "email" | "favorite" | "forward" | "fullscreen" | "group" | "link" | "lock" | "message" | "moon" | "notifications" | "prop" | "rate-limit" | "refresh" | "reply" | "report" | "save" | "search" | "send" | "settings" | "sun" | "unlock" | "upload" | "user" | "user-minus" | "external-link";
 
 const DefaultAvatarIcon = [
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
@@ -55,6 +57,7 @@ const icons: Record<IconName, string> = {
   email: EmailIcon,
   favorite: FavoriteIcon,
   forward: ForwardIcon,
+  fullscreen: FullScreenIcon,
   group: GroupIcon,
   link: LinkIcon,
   lock: LockIcon,
@@ -74,7 +77,8 @@ const icons: Record<IconName, string> = {
   unlock: LockOpenIcon,
   upload: UploadIcon,
   user: UserIcon,
-  "user-minus": UserMinusIcon
+  "user-minus": UserMinusIcon,
+  "external-link": ExternalLinkIcon
 };
 
 export function SvgIcon({ svg, label }: { svg: string; label?: string }) {

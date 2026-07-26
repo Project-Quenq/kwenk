@@ -12,7 +12,9 @@ export const notificationKinds = {
   skinComment: "skin_comment",
   skinCommentFollowed: "skin_comment_followed",
   skinCommentReply: "skin_comment_reply",
-  wallPost: "wall_post"
+  wallPost: "wall_post",
+  gameCommentFollowed: "game_comment_followed",
+  gameCommentReply: "game_comment_reply"
 } as const;
 
 export const notificationKindNames = Object.values(notificationKinds);
@@ -40,7 +42,9 @@ export const commentNotificationKinds: ReadonlySet<NotificationKind> = new Set([
   notificationKinds.postCommentReply,
   notificationKinds.skinComment,
   notificationKinds.skinCommentFollowed,
-  notificationKinds.skinCommentReply
+  notificationKinds.skinCommentReply,
+  notificationKinds.gameCommentFollowed,
+  notificationKinds.gameCommentReply
 ]);
 
 export const notificationTextByKind = {
@@ -57,7 +61,9 @@ export const notificationTextByKind = {
   [notificationKinds.skinComment]: "commented on your skin.",
   [notificationKinds.skinCommentFollowed]: "commented on a skin you commented on.",
   [notificationKinds.skinCommentReply]: "replied to your skin comment.",
-  [notificationKinds.wallPost]: "posted on your wall."
+  [notificationKinds.wallPost]: "posted on your wall.",
+  [notificationKinds.gameCommentFollowed]: "commented on an arcade game you commented on.",
+  [notificationKinds.gameCommentReply]: "replied to your game comment."
 } satisfies Record<NotificationKind, string>;
 
 export const notificationSubjectTypeNames = [
@@ -67,9 +73,10 @@ export const notificationSubjectTypeNames = [
   "post_comment",
   "skin",
   "skin_comment",
-  "user"
+  "user",
+  "game_comment"
 ] as const;
 export type NotificationSubjectType = (typeof notificationSubjectTypeNames)[number];
 
-export const notificationContextTypeNames = ["blog", "post", "skin", "user"] as const;
+export const notificationContextTypeNames = ["blog", "post", "skin", "user", "game"] as const;
 export type NotificationContextType = (typeof notificationContextTypeNames)[number];

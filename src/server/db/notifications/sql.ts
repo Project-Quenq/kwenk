@@ -10,8 +10,13 @@ const notificationColumns = `n.id, n.recipient_id AS recipientId, n.actor_id AS 
   CASE n.context_type
     WHEN 'blog' THEN blogContext.title
     WHEN 'skin' THEN skinContext.title
+    WHEN 'game' THEN gameContext.name
     ELSE NULL
   END AS contextTitle,
+  CASE n.context_type
+    WHEN 'game' THEN gameContext.url
+    ELSE NULL
+  END AS contextSlug,
   n.read_at AS readAt, n.created_at AS createdAt`;
 
 export const notificationFrom = `FROM notifications n
@@ -19,7 +24,8 @@ export const notificationFrom = `FROM notifications n
   JOIN profiles actorProfile ON actorProfile.user_id = actor.id
   LEFT JOIN posts postContext ON postContext.id = n.context_id AND n.context_type = 'post'
   LEFT JOIN blogs blogContext ON blogContext.id = n.context_id AND n.context_type = 'blog'
-  LEFT JOIN skins skinContext ON skinContext.id = n.context_id AND n.context_type = 'skin'`;
+  LEFT JOIN skins skinContext ON skinContext.id = n.context_id AND n.context_type = 'skin'
+  LEFT JOIN arcade_games gameContext ON gameContext.id = n.context_id AND n.context_type = 'game'`;
 
 const visibleActorSql = `(actor.banned_at IS NULL
   AND NOT EXISTS (
@@ -33,6 +39,7 @@ const liveContextSql = `(
   (n.context_type = 'blog' AND blogContext.id IS NOT NULL)
   OR (n.context_type = 'post' AND postContext.id IS NOT NULL)
   OR (n.context_type = 'skin' AND skinContext.id IS NOT NULL)
+  OR (n.context_type = 'game' AND gameContext.id IS NOT NULL)
   OR (n.context_type = 'user' AND n.context_id = actor.id)
 )`;
 

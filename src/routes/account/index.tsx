@@ -14,6 +14,7 @@ import {
 } from "../../server/db/notifications/index.js";
 import { proppedBlogsForViewer } from "../../server/db/blogs/index.js";
 import { postImageFilenamesForAccount, proppedPostsForViewer } from "../../server/db/posts/index.js";
+import { proppedGamesForViewer } from "../../server/db/arcade.js";
 import { deleteAccount, getUserByEmail, updateEmail, updatePassword, updateProfile, updateTimeZone } from "../../server/db/users.js";
 import { field } from "../../server/forms.js";
 import { formId, localBack, verifiedActionForm } from "../../server/http.js";
@@ -82,7 +83,15 @@ export function registerAccountRoutes(app: Hono<AppBindings>) {
 
   app.get("/props", (c) => {
     const user = requireAuth(c);
-    return c.html(<PropsPage user={user} csrf={csrfToken(c)} posts={proppedPostsForViewer(user)} blogs={proppedBlogsForViewer(user)} />);
+    return c.html(
+      <PropsPage
+        user={user}
+        csrf={csrfToken(c)}
+        posts={proppedPostsForViewer(user)}
+        blogs={proppedBlogsForViewer(user)}
+        games={proppedGamesForViewer(user)}
+      />
+    );
   });
 
   app.get("/account/delete", (c) => {

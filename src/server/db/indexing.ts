@@ -7,6 +7,7 @@ const sitemapLimit = 50_000;
 type HandleSitemapRow = { handle: string; lastmod: string };
 type IdSitemapRow = { id: number; lastmod: string };
 type CategoryRow = { category: string; lastmod: string };
+type ArcadeSitemapRow = { url: string; lastmod: string };
 
 export function publicProfileCanonicalPathByHandle(handle: string) {
   const row = sqlite
@@ -101,4 +102,18 @@ export function publicBlogCategoryIndexPaths(limit = limits.listPage) {
   )
     .filter((row) => isBlogCategory(row.category))
     .map((row) => ({ path: `/blog/category/${encodeURIComponent(row.category)}`, lastmod: row.lastmod }));
+}
+
+export function publicArcadeIndexPaths(limit = sitemapLimit) {
+  const rows = sqlite
+    .prepare(
+      `SELECT url, updated_at AS lastmod
+      FROM arcade_games
+      ORDER BY name ASC LIMIT ?`
+    )
+    .all(limit) as ArcadeSitemapRow[];
+  return rows.map((row) => {
+    const slug = row.url.split("/").pop() ?? "";
+    return { path: `/arcade/${slug}`, lastmod: row.lastmod };
+  });
 }

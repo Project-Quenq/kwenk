@@ -1,6 +1,6 @@
 # Threat Model
 
-My Quenq intentionally allows user-controlled profiles. That makes security boundaries explicit and non-optional.
+Quenq intentionally allows user-controlled profiles. That makes security boundaries explicit and non-optional.
 
 ## Assets
 

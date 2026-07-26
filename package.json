@@ -1,5 +1,5 @@
 {
-  "name": "my-quenq",
+  "name": "quenq",
   "version": "1.0.0",
   "license": "GPL-3.0-only",
   "private": true,
@@ -17,7 +17,8 @@
     "assets:brand:clean": "tsx src/scripts/generateBrandAssets.ts --clean",
     "build": "pnpm clean && tsc -p tsconfig.json && node dist/scripts/buildCss.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "db:init": "tsx --env-file=.env src/server/db/init.ts"
+    "db:init": "tsx --env-file=.env src/server/db/init.ts",
+    "db:import-arcade": "tsx --env-file=.env src/scripts/importArcade.ts"
   },
   "dependencies": {
     "@hono/node-server": "2.0.3",

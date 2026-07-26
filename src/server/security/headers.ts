@@ -3,7 +3,7 @@ const contentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
   "script-src-attr 'none'",
   "img-src 'self' data: https:",
-  "media-src 'self'",
+  "media-src 'self' https:",
   "connect-src 'self' https:",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",

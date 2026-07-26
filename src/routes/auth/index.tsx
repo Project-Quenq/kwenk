@@ -11,6 +11,7 @@ import {
   setUserRole,
   updatePassword
 } from "../../server/db/users.js";
+import { getArcadePage } from "../../server/db/arcade.js";
 import { installBuiltinSkins } from "../../server/db/skins.js";
 import { consumeResetToken, consumeVerificationToken, requestPasswordReset, requestVerification } from "../../server/db/email.js";
 import { siteSettings } from "../../server/db/siteSettings.js";
@@ -23,7 +24,9 @@ import { env } from "../../server/env.js";
 import { smtpConfigured } from "../../server/email/smtp.js";
 import { canonicalEmail, characterRangeLabel, limits, validEmail, validHandle, validPassword, validUsername } from "../../policy.js";
 import { generateCaptcha, verifyCaptcha } from "../../server/captcha.js";
+import { previewFromRows } from "../../server/pagination.js";
 import type { CurrentUser } from "../../currentUser.js";
+import type { PersonCard } from "../../models.js";
 import type { AppBindings, AppContext } from "../../server/context.js";
 import { LogoutPage, ResetApplyPage, ResetRequestPage, ResetUnavailablePage, SignUpPage, VerifyPage } from "../../views/auth/index.js";
 import { LandingPage } from "../../views/home/index.js";
@@ -84,7 +87,6 @@ export function registerAuthRoutes(app: Hono<AppBindings>) {
     const viewer = currentUser(c);
     const settings = siteSettings();
     
-    // 1. Verify Captcha
     if (!verifyCaptcha(c, field(form, "captcha"))) {
       return signupPage(c, viewer, field(form, "email"), "Incorrect security code. Please try again.", 400, field(form, "handle"));
     }
@@ -181,14 +183,19 @@ function prefillEmail(value: string | undefined) {
 }
 
 function landingPage(c: AppContext, user: CurrentUser | null, message?: string, status: 200 | 400 = 200) {
+  const newestPreview = previewFromRows(newestUsers(user, limits.newestPeople + 1), limits.newestPeople);
+  const newestGroupsPreview = previewFromRows(listGroups(user, limits.newestCommunities + 1), limits.newestCommunities);
+  const spotlightPage = getArcadePage(1, "all", "", 0);
+
   return c.html(
     <LandingPage
       user={user}
       csrf={csrfToken(c)}
       settings={siteSettings()}
       admin={user ? null : getProfile(env.adminUserId) ?? null}
-      newest={newestUsers(user)}
+      newest={newestPreview.items}
       newestGroups={user ? listGroups(user, limits.newestCommunities) : featuredCommunityGroups()}
+      spotlightGames={spotlightPage.items.slice(0, 12)}
       message={message}
       passwordResetAvailable={smtpConfigured()}
     />,

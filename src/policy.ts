@@ -62,6 +62,7 @@ export const limits = {
   skinHtml: 20000,
   contentBody: 20000,
   listPage: 50,
+  gamesPerPage: 30,
   newestPeople: 6,
   newestCommunities: 3,
   profileFrontRow: 8,
@@ -147,7 +148,9 @@ export const reservedHandles: ReadonlySet<string> = new Set([
   "security",
   "staff",
   "support",
-  "system"
+  "system",
+  "arcade",
+  "apps"
 ]);
 
 const characterCountFormatter = new Intl.NumberFormat("en-US");
@@ -178,7 +181,8 @@ const reportSubjectTypeNames = [
   "post",
   "post_comment",
   "blog_comment",
-  "skin_comment"
+  "skin_comment",
+  "game_comment"
 ] as const;
 
 export type ReportSubjectType = (typeof reportSubjectTypeNames)[number];

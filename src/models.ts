@@ -149,6 +149,21 @@ export type PostItem = {
   commentBump?: PostCommentBump | null;
 };
 
+export type GameItem = {
+  id: number;
+  name: string;
+  url: string;
+  thumbnail: string;
+  description: string;
+  width: number;
+  height: number;
+  createdAt: string;
+  updatedAt: string;
+  propsCount: number;
+  commentCount: number;
+  proppedByViewer: number;
+};
+
 export type ReportItem = {
   id: number;
   reporterId: number | null;
@@ -211,6 +226,7 @@ export type NotificationItem = {
   contextPostAuthorId: number | null;
   contextPostWallUserId: number | null;
   contextTitle: string | null;
+  contextSlug?: string | null;
   readAt: string | null;
   createdAt: string;
 };

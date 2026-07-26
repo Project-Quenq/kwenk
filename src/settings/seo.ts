@@ -29,7 +29,7 @@ export function siteSeoDescription(settings: SiteSettings) {
 }
 
 export function siteMarketingDescription(settings: Pick<SiteSettings, "identity">) {
-  const name = settings.identity.name.trim() || "My Quenq";
+  const name = settings.identity.name.trim() || "Quenq";
   return `${name} is a nostalgic social network inspired by the early days of the web.`;
 }
 
@@ -83,24 +83,40 @@ export function siteWebManifest(settings: SiteSettings, palette: ColorPalette) {
 export function siteSocialPreviewSvg(settings: SiteSettings, palette: ColorPalette) {
   const background = headerChromeColor(palette);
   const foreground = palette.chromeText;
-  const name = (settings.identity.name || "My Quenq").toLowerCase();
-  const tagline = (settings.identity.tagline || "Your Personal Web Space").toLowerCase();
+  const name = "quenq.com";
+  const tagline = (settings.identity.tagline).toLowerCase();
 
-  const nameSize = 105;
-  const taglineSize = 38;
+  const nameSize = 96;
+  const taglineSize = 36;
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="${xmlAttribute(siteSocialImageAlt(settings))}">`,
+    `<defs>`,
+      `<radialGradient id="centerFade" cx="50%" cy="50%" r="50%">`,
+        `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />`,
+        `<stop offset="100%" stop-color="#ffffff" stop-opacity="0.1" />`,
+      `</radialGradient>`,
+      `<mask id="giantLogoMask">`,
+        `<rect width="1200" height="630" fill="url(#centerFade)" />`,
+      `</mask>`,
+    `</defs>`,
+
     `<rect width="1200" height="630" fill="${background}" />`,
-    
-    `<g transform="translate(120, 171) scale(18)" color="${foreground}" fill="${foreground}">`,
+
+    `<g mask="url(#giantLogoMask)">`,
+      `<g transform="translate(296, 11) scale(38)" color="#ffffff" fill="#ffffff" fill-opacity="0.14">`,
+        brandIconShapeSvg,
+      `</g>`,
+    `</g>`,
+
+    `<g transform="translate(536, 130) scale(8)" color="${foreground}" fill="${foreground}">`,
     brandIconShapeSvg,
     `</g>`,
-    
-    `<text x="500" y="305" fill="${foreground}" font-family="Verdana, Arial, sans-serif" font-size="${nameSize}" font-weight="700">${xmlText(name)}</text>`,
-    
-    `<text x="500" y="375" fill="${foreground}" fill-opacity="0.8" font-family="Verdana, Arial, sans-serif" font-size="${taglineSize}" font-weight="400">${xmlText(tagline)}</text>`,
-    
+
+    `<text x="600" y="380" text-anchor="middle" fill="${foreground}" font-family="Verdana, Arial, sans-serif" font-size="${nameSize}" font-weight="700">${xmlText(name)}</text>`,
+
+    `<text x="600" y="445" text-anchor="middle" fill="${foreground}" fill-opacity="0.85" font-family="Verdana, Arial, sans-serif" font-size="${taglineSize}" font-weight="400">${xmlText(tagline)}</text>`,
+
     `</svg>`
   ].join("");
 }
@@ -116,11 +132,6 @@ function organizationStructuredData(settings: SiteSettings, siteUrl: string): Js
     url: siteUrl,
     ...(settings.contact.email ? { email: settings.contact.email } : {})
   };
-}
-
-function fittedFontSize(text: string, base: number, minimum: number, comfortableCharacters: number) {
-  if (text.length <= comfortableCharacters) return base;
-  return Math.max(minimum, Math.floor(base * (comfortableCharacters / text.length)));
 }
 
 function xmlText(input: string) {

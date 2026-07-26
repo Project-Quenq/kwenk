@@ -1,4 +1,4 @@
-const profileSkinDocsUrl = "https://github.com/Project-Quenq/my-quenq/blob/main/docs/skins.md";
+const profileSkinDocsUrl = "https://github.com/Project-Quenq/quenq/blob/main/docs/skins.md";
 const profileSkinsUrl = "/skins";
 const profileSkinHtmlHintText = "Use supported skin variables and data-skin selectors.";
 

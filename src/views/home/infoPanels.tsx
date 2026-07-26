@@ -19,9 +19,9 @@ export const landingCards = [
   },
   {
     title: "Apps & games",
-    body: "Launch simulators, emulators, and classic Flash games on our main site. Use this space to share your favorite games, high scores, and join community groups.",
-    href: "https://quenq.com",
-    cta: "Explore the archive"
+    body: "Launch simulators and classic Flash games directly in your browser. Play your favorite games, give props, leave comments, and join dedicated gaming communities.",
+    href: "/arcade",
+    cta: "Explore the arcade"
   },
   {
     title: "Cozy communities",

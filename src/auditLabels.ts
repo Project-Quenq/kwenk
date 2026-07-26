@@ -36,7 +36,9 @@ const auditSubjectTypeLabels = {
   report: "Report",
   skin: "Skin",
   skin_comment: "Skin comment",
-  user: "Profile"
+  user: "Profile",
+  arcade_game: "Arcade game",
+  game_comment: "Game comment"
 } as const;
 
 export type AuditSubjectType = keyof typeof auditSubjectTypeLabels;
