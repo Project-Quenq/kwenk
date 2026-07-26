@@ -155,6 +155,7 @@ export type GameItem = {
   url: string;
   thumbnail: string;
   description: string;
+  genresJson: string;
   width: number;
   height: number;
   createdAt: string;

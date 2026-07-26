@@ -436,8 +436,6 @@ CREATE TABLE IF NOT EXISTS automod_rules (
 CREATE INDEX IF NOT EXISTS automod_rules_enabled_idx ON automod_rules(enabled, scope);
 CREATE INDEX IF NOT EXISTS automod_rules_updated_idx ON automod_rules(updated_at);
 
--- PROJECT QUENQ ADDITIONS --
-
 CREATE TABLE IF NOT EXISTS arcade_games (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -479,8 +477,50 @@ BEGIN
 END;
 `;
 
+function ensureNotificationsSchemaUpToDate() {
+  const row = sqlite
+    .prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='notifications'")
+    .get() as { sql: string } | undefined;
+
+  if (row && (!row.sql.includes("game_comment_reply") || !row.sql.includes("'game'"))) {
+    sqlite.transaction(() => {
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_wall_posts_insert;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_posts_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_post_comments_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_blogs_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_blog_comments_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_groups_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_skins_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_skin_comments_delete;");
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_game_comments_delete;");
+
+      sqlite.exec("ALTER TABLE notifications RENAME TO notifications_old;");
+
+      sqlite.exec(`
+        CREATE TABLE notifications (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          recipient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          actor_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          kind TEXT NOT NULL CHECK (kind IN (${notificationKindCheck})),
+          subject_type TEXT NOT NULL CHECK (subject_type IN (${notificationSubjectTypeCheck})),
+          subject_id INTEGER NOT NULL,
+          context_type TEXT NOT NULL CHECK (context_type IN (${notificationContextTypeCheck})),
+          context_id INTEGER NOT NULL,
+          read_at TEXT,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CHECK (recipient_id <> actor_id)
+        );
+      `);
+
+      sqlite.exec("INSERT INTO notifications SELECT * FROM notifications_old;");
+      sqlite.exec("DROP TABLE notifications_old;");
+    })();
+  }
+}
+
 export function initializeDatabase() {
   ensureRuntimeDirs();
+  ensureNotificationsSchemaUpToDate();
   sqlite.exec(schemaSql);
   installDefaultAutomodRules();
   installBuiltinSkins();

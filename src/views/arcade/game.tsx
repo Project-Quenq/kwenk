@@ -14,6 +14,7 @@ type GamePageProps = {
   comments: CommentItem[];
   relatedGames: GameItem[];
   genres: string[];
+  hasProppedGames?: boolean;
 };
 
 export function GamePlayPage(props: GamePageProps) {
@@ -62,12 +63,13 @@ export function GamePlayPage(props: GamePageProps) {
       <PageFrame width="wide" title={`Play ${game.name} Online`}>
         
         <Panel title={game.name} tone="strong">
-          <div style={`width: 100%; max-width: ${game.width}px; margin: 0 auto;`}>
+          <div id="game-wrapper" style={`width: 100%; max-width: ${game.width}px; margin: 0 auto;`}>
             <iframe 
               id="game-iframe"
               src={cdnIframeSrc}
               title={`${game.name} Game Player`}
               style={`aspect-ratio: ${game.width} / ${game.height}; width: 100%; border: none; background-color: #171c20; border-radius: var(--radius-panel);`}
+              allow="fullscreen; autoplay; pointer-lock;"
               allowfullscreen={true}
             ></iframe>
             
@@ -81,6 +83,31 @@ export function GamePlayPage(props: GamePageProps) {
             document.addEventListener('DOMContentLoaded', () => {
               const btn = document.getElementById('fullscreen-btn');
               const iframe = document.getElementById('game-iframe');
+              const wrapper = document.getElementById('game-wrapper');
+
+              function focusGame() {
+                if (iframe && iframe.contentWindow) {
+                  try { iframe.contentWindow.focus(); } catch(err) {}
+                }
+              }
+
+              if (wrapper) {
+                wrapper.addEventListener('mouseover', focusGame);
+                wrapper.addEventListener('mouseenter', focusGame);
+                wrapper.addEventListener('click', focusGame);
+              }
+              window.addEventListener('focus', focusGame);
+
+              window.addEventListener('keydown', (e) => {
+                if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+                  const active = document.activeElement;
+                  const isInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+                  if (!isInput) {
+                    e.preventDefault();
+                  }
+                }
+              });
+
               if (btn && iframe) {
                 btn.addEventListener('click', (e) => {
                   e.preventDefault();
@@ -92,6 +119,7 @@ export function GamePlayPage(props: GamePageProps) {
                   if ('keyboard' in navigator && 'lock' in navigator.keyboard) {
                     navigator.keyboard.lock(['Escape']).catch(() => {});
                   }
+                  setTimeout(focusGame, 100);
                 });
               }
             });
@@ -104,6 +132,9 @@ export function GamePlayPage(props: GamePageProps) {
             <div class="context-card">
               <ul style="list-style: none; padding: 0; margin: 0; line-height: 1.8;">
                 <li><a href="/arcade">All Games</a></li>
+                {props.user && props.hasProppedGames ? (
+                  <li><a href="/arcade?genre=propped">My Props</a></li>
+                ) : null}
                 {props.genres.map((genre) => (
                   <li key={genre}>
                     <a href={`/arcade?genre=${encodeURIComponent(genre.toLowerCase())}`} style="text-transform: capitalize;">

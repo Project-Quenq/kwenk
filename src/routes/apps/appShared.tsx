@@ -154,10 +154,12 @@ export type AppPlayerPageProps = {
   aspectHeight: number;
   fullDescriptionNode: ViewChild;
   controlsExtra?: ViewChild;
+  iframeAllow?: string;
 };
 
 export function AppPlayerPage(props: AppPlayerPageProps) {
   const recommendedApps = getRandomApps(props.appName, 6);
+  const allowPolicy = props.iframeAllow ?? "fullscreen; autoplay; pointer-lock;";
 
   return (
     <Layout
@@ -172,13 +174,13 @@ export function AppPlayerPage(props: AppPlayerPageProps) {
       <PageFrame width="wide" title={`Play ${props.appName} Online`}>
         
         <Panel title={props.appName} tone="strong">
-          <div style="width: 100%; position: relative;">
+          <div id="app-wrapper" style="width: 100%; position: relative;">
             <iframe 
               id="app-iframe"
               src={props.iframeSrc}
               title={`${props.appName} Player`}
               style={`aspect-ratio: ${props.aspectWidth} / ${props.aspectHeight}; width: 100%; border: none; background-color: #171c20; border-radius: var(--radius-panel);`}
-              allow="fullscreen; autoplay; pointer-lock;"
+              allow={allowPolicy}
               allowfullscreen={true}
             ></iframe>
             
@@ -195,6 +197,31 @@ export function AppPlayerPage(props: AppPlayerPageProps) {
               document.addEventListener('DOMContentLoaded', () => {
                 const btn = document.getElementById('app-fullscreen-btn');
                 const iframe = document.getElementById('app-iframe');
+                const wrapper = document.getElementById('app-wrapper');
+
+                function focusGame() {
+                  if (iframe && iframe.contentWindow) {
+                    try { iframe.contentWindow.focus(); } catch(err) {}
+                  }
+                }
+
+                if (wrapper) {
+                  wrapper.addEventListener('mouseover', focusGame);
+                  wrapper.addEventListener('mouseenter', focusGame);
+                  wrapper.addEventListener('click', focusGame);
+                }
+                window.addEventListener('focus', focusGame);
+
+                window.addEventListener('keydown', (e) => {
+                  if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+                    const active = document.activeElement;
+                    const isInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+                    if (!isInput) {
+                      e.preventDefault();
+                    }
+                  }
+                });
+
                 if (btn && iframe) {
                   btn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -206,6 +233,7 @@ export function AppPlayerPage(props: AppPlayerPageProps) {
                     if ('keyboard' in navigator && 'lock' in navigator.keyboard) {
                       navigator.keyboard.lock(['Escape']).catch(() => {});
                     }
+                    setTimeout(focusGame, 100);
                   });
                 }
               });

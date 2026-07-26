@@ -63,7 +63,7 @@ function assertReportSubject(c: AppContext, user: CurrentUser, subjectType: Repo
   if (commentTarget) {
     const parentId = commentParentId(commentTarget, subjectId, user);
     if (!parentId) throw new HTTPException(404, { message: "Report subject not found." });
-    assertReportSubject(c, user, commentTarget, parentId);
+    assertReportSubject(c, user, commentTarget as ReportSubjectType, parentId);
     return;
   }
 

@@ -72,7 +72,9 @@ function MessageEntry(props: { csrf: string; message: MessageItem; viewerId: num
   const author = { handle: props.message.senderHandle, name: props.message.senderName, pfp: props.message.senderPfp };
   const utilityActions = (
     <>
-      <a href={reportPath("message", props.message)}><ActionLabel action="report">Report</ActionLabel></a>
+      {!own ? (
+        <a href={reportPath("message", props.message)}><ActionLabel action="report">Report</ActionLabel></a>
+      ) : null}
       <form method="post" action={messageDeletePath(props.message)}>
         <CsrfInput csrf={props.csrf} />
         <button class="button--danger" type="submit"><ActionLabel action="delete">Delete</ActionLabel></button>

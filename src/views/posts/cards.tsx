@@ -49,6 +49,7 @@ export function PostCard(props: {
   const post = props.post;
   const canDelete = canDeletePost(props.user, post);
   const canInteract = props.canInteract ?? Boolean(post.viewerCanInteract);
+  const isOwnPost = Boolean(props.user && post.authorId === props.user.id);
   const href = postPath(post);
   const authorSkinHtml = (props.skinSource ?? "author") === "author" ? post.authorSkinHtml : null;
   const engagementActions = (
@@ -68,7 +69,9 @@ export function PostCard(props: {
   );
   const utilityActions = (
     <>
-      <a href={reportPath("post", post)}><ActionLabel action="report">Report</ActionLabel></a>
+      {!isOwnPost ? (
+        <a href={reportPath("post", post)}><ActionLabel action="report">Report</ActionLabel></a>
+      ) : null}
       {canDelete ? (
         <form method="post" action={`${href}/delete`} class="inline-form">
           <CsrfInput csrf={props.csrf} />

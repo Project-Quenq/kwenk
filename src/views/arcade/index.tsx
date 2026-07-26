@@ -15,13 +15,17 @@ type ArcadePageProps = {
   totalPages: number;
   currentGenre: string;
   currentSearch: string;
+  hasProppedGames?: boolean;
 };
 
 export function ArcadeListPage(props: ArcadePageProps) {
+  const isProppedFilter = props.currentGenre === "propped" || props.currentGenre === "props";
   const matchedGenre = props.genres.find(
     (g) => g.toLowerCase() === props.currentGenre.toLowerCase()
   );
-  const formattedGenre = matchedGenre || (props.currentGenre ? props.currentGenre.charAt(0).toUpperCase() + props.currentGenre.slice(1) : "All");
+  const formattedGenre = isProppedFilter 
+    ? "My Propped" 
+    : matchedGenre || (props.currentGenre ? props.currentGenre.charAt(0).toUpperCase() + props.currentGenre.slice(1) : "All");
 
   const isFilteredByGenre = props.currentGenre && props.currentGenre.toLowerCase() !== "all";
 
@@ -29,9 +33,7 @@ export function ArcadeListPage(props: ArcadePageProps) {
     ? `Browse and play classic ${formattedGenre} Flash games instantly in your browser at the Quenq Arcade.`
     : "Enter the Quenq Arcade, a massive, curated library of the best free emulated Flash games. Play nostalgic classics from a golden era of browser gaming, instantly.";
 
-  const pageTitle = isFilteredByGenre
-    ? `${formattedGenre} Games`
-    : "Arcade";
+  const pageTitle = isFilteredByGenre ? `${formattedGenre} Games` : "Arcade";
 
   const canonicalPath = props.currentPage > 1
     ? `/arcade?page=${props.currentPage}`
@@ -61,6 +63,15 @@ export function ArcadeListPage(props: ArcadePageProps) {
                     All Games
                   </a>
                 </li>
+
+                {props.user && props.hasProppedGames ? (
+                  <li>
+                    <a href="/arcade?genre=propped" style={isProppedFilter ? "font-weight: bold;" : undefined}>
+                      My Props
+                    </a>
+                  </li>
+                ) : null}
+
                 {props.genres.map((genre) => {
                   const isSelected = props.currentGenre.toLowerCase() === genre.toLowerCase();
                   return (

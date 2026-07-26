@@ -26,7 +26,8 @@ export function BlogEntryPage(props: {
   commentsHref?: string | null;
   fullComments?: boolean;
 }) {
-  const canEdit = props.user?.id === props.blog.authorId || isAdminUser(props.user);
+  const isOwnBlog = Boolean(props.user && props.blog.authorId === props.user.id);
+  const canEdit = isOwnBlog || isAdminUser(props.user);
   const canDelete = canEdit || Boolean(props.user && canModerateTarget(props.user, { id: props.blog.authorId, role: props.blog.authorRole }));
   const href = blogPath(props.blog);
   const engagementActions = props.user ? (
@@ -67,11 +68,13 @@ export function BlogEntryPage(props: {
               </p>
               <p><b>Category:</b> <a href={`/blog/category/${encodeURIComponent(props.blog.category)}`}>{props.blog.category}</a></p>
               {props.user ? null : <p><b>Props:</b> {props.blog.propsCount}</p>}
-              <p>
-                <a href={reportPath("blog", props.blog)}>
-                  <Icon name="report" /> Report
-                </a>
-              </p>
+              {!isOwnBlog ? (
+                <p>
+                  <a href={reportPath("blog", props.blog)}>
+                    <Icon name="report" /> Report
+                  </a>
+                </p>
+              ) : null}
             </div>
           </div>
           <AdBanner />  

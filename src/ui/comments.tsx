@@ -51,6 +51,9 @@ export function CommentList(props: {
     <div class="discussion-list">
       {props.comments.map((comment) => {
         const user = props.user;
+        const isOwnComment = Boolean(user && comment.authorId === user.id);
+        const canReport = Boolean(props.reportType && !isOwnComment);
+        
         const deleteForm =
           user && props.csrf && props.deleteAction && canDeleteComment(user, comment, props.deleteOwnerIds)
             ? { action: `${props.deleteAction}/${comment.id}/delete`, csrf: props.csrf }
@@ -62,10 +65,10 @@ export function CommentList(props: {
             <CommentForm action={reply.action} csrf={reply.csrf} parentId={comment.id} button="Post reply" />
           </details>
         ) : null;
-        const hasUtilityActions = Boolean(props.reportType || deleteForm);
+        const hasUtilityActions = Boolean(canReport || deleteForm);
         const utilityActions = hasUtilityActions ? (
           <>
-            {props.reportType ? <a href={reportPath(props.reportType, comment)}><ActionLabel action="report">Report</ActionLabel></a> : null}
+            {canReport ? <a href={reportPath(props.reportType!, comment)}><ActionLabel action="report">Report</ActionLabel></a> : null}
             {deleteForm ? (
               <form method="post" action={deleteForm.action}>
                 <CsrfInput csrf={deleteForm.csrf} />

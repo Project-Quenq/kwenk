@@ -117,6 +117,10 @@ function notificationHref(item: NotificationItem) {
       return `${postPath(item.contextId)}${commentAnchor}`;
     case "skin":
       return commentAnchor ? `${skinCommentsPath(item.contextId)}${commentAnchor}` : skinPath(item.contextId);
+    case "game": {
+      const slug = item.contextSlug ? item.contextSlug.split("/").pop() : "";
+      return commentAnchor ? `/arcade/${slug}${commentAnchor}` : `/arcade/${slug}`;
+    }
     case "user":
       return profilePath(item.actorHandle);
   }
@@ -130,6 +134,8 @@ function notificationContextLabel(item: NotificationItem) {
       return "View post";
     case "skin":
       return item.contextTitle ? `Skin: ${item.contextTitle}` : "View skin";
+    case "game":
+      return item.contextTitle ? `Game: ${item.contextTitle}` : "View arcade game";
     case "user":
       return "View profile";
   }

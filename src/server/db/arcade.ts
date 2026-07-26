@@ -13,7 +13,7 @@ type PagedGamesResult = {
 
 let genresCache: string[] | null = null;
 
-const gameColumns = (viewerId: number) => `g.id, g.name, g.url, g.thumbnail, g.description, g.width, g.height,
+const gameColumns = (viewerId: number) => `g.id, g.name, g.url, g.thumbnail, g.description, g.genres_json AS genresJson, g.width, g.height,
   g.created_at AS createdAt, g.updated_at AS updatedAt,
   (SELECT COUNT(*) FROM game_props WHERE game_id = g.id) AS propsCount,
   (SELECT COUNT(*) FROM game_comments WHERE game_id = g.id) AS commentCount,
@@ -86,6 +86,43 @@ export function clearGameGenresCache() {
   genresCache = null;
 }
 
+export function getWeeklySpotlightGames(limit = 12, viewerId = 0): GameItem[] {
+  const weekSeed = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+  const countRow = sqlite.prepare("SELECT COUNT(*) AS count FROM arcade_games").get() as { count: number };
+  if (!countRow.count) return [];
+
+  const offset = (weekSeed * limit) % countRow.count;
+
+  const items = sqlite
+    .prepare(
+      `SELECT ${gameColumns(viewerId)}
+      FROM arcade_games g
+      ORDER BY g.id ASC
+      LIMIT ? OFFSET ?`
+    )
+    .all(limit, offset) as GameItem[];
+
+  if (items.length < limit) {
+    const remaining = limit - items.length;
+    const wrapItems = sqlite
+      .prepare(
+        `SELECT ${gameColumns(viewerId)}
+        FROM arcade_games g
+        ORDER BY g.id ASC
+        LIMIT ?`
+      )
+      .all(remaining) as GameItem[];
+    return [...items, ...wrapItems];
+  }
+
+  return items;
+}
+
+export function userHasProppedGames(userId: number): boolean {
+  if (!userId) return false;
+  return Boolean(sqlite.prepare("SELECT 1 FROM game_props WHERE user_id = ? LIMIT 1").get(userId));
+}
+
 export function getArcadePage(
   page: number,
   genre = "all",
@@ -97,9 +134,17 @@ export function getArcadePage(
   const offset = (currentPage - 1) * limit;
 
   let filterSql = "WHERE 1=1";
+  let joinSql = "";
   const params: unknown[] = [];
 
-  if (genre && genre !== "all") {
+  if (genre === "propped" || genre === "props") {
+    if (viewerId > 0) {
+      joinSql = "JOIN game_props viewer_prop ON viewer_prop.game_id = g.id AND viewer_prop.user_id = ?";
+      params.push(viewerId);
+    } else {
+      filterSql += " AND 1=0";
+    }
+  } else if (genre && genre !== "all") {
     filterSql += " AND g.genres_json LIKE ?";
     params.push(`%"${genre}"%`);
   }
@@ -111,7 +156,7 @@ export function getArcadePage(
   }
 
   const countRow = sqlite
-    .prepare(`SELECT COUNT(*) AS count FROM arcade_games g ${filterSql}`)
+    .prepare(`SELECT COUNT(*) AS count FROM arcade_games g ${joinSql} ${filterSql}`)
     .get(...params) as { count: number };
 
   const totalCount = countRow.count;
@@ -122,8 +167,9 @@ export function getArcadePage(
     .prepare(
       `SELECT ${gameColumns(viewerId)}
       FROM arcade_games g
+      ${joinSql}
       ${filterSql}
-      ORDER BY g.name ASC LIMIT ? OFFSET ?`
+      ORDER BY ${genre === "propped" || genre === "props" ? "viewer_prop.created_at DESC" : "g.name ASC"} LIMIT ? OFFSET ?`
     )
     .all(...queryParams) as GameItem[];
 
@@ -176,7 +222,6 @@ export function createGame(name: string, url: string, thumbnail: string, descrip
   return Number(info.lastInsertRowid);
 }
 
-// Arcade Comments integration wrappers
 export function gameCommentsFor(gameId: number, viewer: CurrentUser | null = null, limit?: number): CommentItem[] {
   return commentsFor("game", gameId, { viewer, limit, order: "oldest" });
 }

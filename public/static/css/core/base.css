@@ -251,3 +251,14 @@ a:hover .count,
 a:active .count {
   color: inherit;
 }
+
+iframe:fullscreen,
+iframe:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  border-radius: 0 !important;
+  background-color: #171c20 !important;
+}

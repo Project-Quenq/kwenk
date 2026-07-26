@@ -46,6 +46,16 @@ const commentSources = {
     label: "Skin comment",
     url: (parentId: number, commentId: number) => `${skinCommentsPath(parentId)}#${anchors.comment(commentId)}`,
     row: (id: number) => commentRow("skin_comments", "skin_id", id)
+  },
+  game_comment: {
+    target: "game",
+    label: "Game comment",
+    url: (parentId: number, commentId: number) => {
+      const gameRow = sqlite.prepare("SELECT url FROM arcade_games WHERE id = ?").get(parentId) as { url: string } | undefined;
+      const slug = gameRow?.url ? gameRow.url.split("/").pop() : "";
+      return `/arcade/${slug}#${anchors.comment(commentId)}`;
+    },
+    row: (id: number) => commentRow("game_comments", "game_id", id)
   }
 } as const satisfies Record<CommentReportSubjectType, CommentSource>;
 

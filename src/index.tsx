@@ -3,6 +3,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { HTTPException } from "hono/http-exception";
+import { trimTrailingSlash } from "hono/trailing-slash";
 import { routeRegistrars } from "./routes/index.js";
 import { registerSystemRoutes } from "./routes/system/index.js";
 import { registerMediaRoutes } from "./routes/system/media.js";
@@ -21,6 +22,8 @@ import type { AppBindings } from "./server/context.js";
 initializeDatabase();
 
 const app = new Hono<AppBindings>();
+
+app.use(trimTrailingSlash());
 
 app.use(async (c, next) => {
   try {

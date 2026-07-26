@@ -108,6 +108,7 @@ export function SkinDetailPage(props: {
   const canEdit = props.skin.authorId === null ? isAdminUser(props.user) : props.user?.id === props.skin.authorId || isAdminUser(props.user);
   const canDelete =
     canEdit || Boolean(props.user && props.skin.authorId !== null && canModerateTarget(props.user, { id: props.skin.authorId, role: props.skin.authorRole }));
+  const isOwnSkin = Boolean(props.user && props.skin.authorId !== null && props.skin.authorId === props.user.id);
   const href = skinPath(props.skin);
   const primaryActions = (
     <>
@@ -122,7 +123,9 @@ export function SkinDetailPage(props: {
   );
   const managementActions = (
     <>
-      <a href={reportPath("skin", props.skin)}><ActionLabel action="report">Report</ActionLabel></a>
+      {!isOwnSkin ? (
+        <a href={reportPath("skin", props.skin)}><ActionLabel action="report">Report</ActionLabel></a>
+      ) : null}
       {canDelete ? (
         <>
           {canEdit ? <a href={`${href}/edit`}><ActionLabel action="edit">Edit</ActionLabel></a> : null}
