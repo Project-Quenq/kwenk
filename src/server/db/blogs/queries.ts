@@ -4,14 +4,23 @@ import { blogRows, blogPreviewRows } from "./sql.js";
 import { blogVisibilitySql } from "./visibility.js";
 import { profileVisibilitySql } from "../profileVisibility.js";
 import { containsLikePattern, likeEscapeClause } from "../like.js";
+import {
+  decodeKeysetCursor,
+  keysetBeforeCondition,
+  normalizePageLimit,
+  pageFromRows,
+  type PageOptions
+} from "../../pagination.js";
 
-const blogDiscoveryOrder = `ORDER BY b.pinned DESC, (propsCount + commentCount) DESC, propsCount DESC, commentCount DESC, b.created_at DESC, b.id DESC`;
-const blogLatestOrder = "ORDER BY b.pinned DESC, b.created_at DESC, b.id DESC";
-type BlogListOrder = "latest" | "engagement";
+const blogDiscoveryOrder = `ORDER BY (propsCount + commentCount) DESC, propsCount DESC, commentCount DESC, b.created_at DESC, b.id DESC`;
+const blogLatestOrder = "ORDER BY b.created_at DESC, b.id DESC";
+const userBlogLatestOrder = "ORDER BY b.pinned DESC, b.created_at DESC, b.id DESC";
 
-export function blogsForUser(userId: number, viewer: CurrentUser | null, limit = limits.profileBlogPreview, order: BlogListOrder = "latest") {
+export type BlogSortOrder = "latest" | "popular";
+
+export function blogsForUser(userId: number, viewer: CurrentUser | null, limit = limits.profileBlogPreview, order: BlogSortOrder = "latest") {
   const visibility = blogVisibilitySql(viewer);
-  const orderBy = order === "engagement" ? blogDiscoveryOrder : blogLatestOrder;
+  const orderBy = order === "popular" ? blogDiscoveryOrder : userBlogLatestOrder;
   return blogPreviewRows(
     `WHERE b.author_id = ? AND ${visibility.sql}
     ${orderBy} LIMIT ?`,
@@ -22,35 +31,90 @@ export function blogsForUser(userId: number, viewer: CurrentUser | null, limit =
   );
 }
 
+export function blogsForUserPage(
+  userId: number,
+  viewer: CurrentUser | null,
+  options: PageOptions = {},
+  order: BlogSortOrder = "latest",
+  searchQuery = ""
+) {
+  const limit = normalizePageLimit(options.limit, limits.listPage, limits.listPage);
+  const visibility = blogVisibilitySql(viewer);
+
+  let filterSql = `WHERE b.author_id = ? AND ${visibility.sql}`;
+  const params: unknown[] = [userId, ...visibility.params];
+
+  if (searchQuery && searchQuery.trim()) {
+    const pattern = containsLikePattern(searchQuery.trim());
+    filterSql += ` AND (b.title LIKE ? ${likeEscapeClause} OR b.body_html LIKE ? ${likeEscapeClause})`;
+    params.push(pattern, pattern);
+  }
+
+  const before = keysetBeforeCondition(decodeKeysetCursor(options.before), "b.created_at", "b.id");
+  const orderBy = order === "popular" ? blogDiscoveryOrder : userBlogLatestOrder;
+
+  const rows = blogPreviewRows(
+    `${filterSql} ${before.sql} ${orderBy} LIMIT ?`,
+    viewer,
+    ...params,
+    ...before.params,
+    limit + 1
+  );
+
+  return pageFromRows(rows, limit);
+}
+
 export function allBlogsForUser(userId: number, limit = limits.exportRows) {
   return blogPreviewRows("WHERE b.author_id = ? ORDER BY b.pinned DESC, b.created_at DESC LIMIT ?", exportViewer(userId), userId, limit);
 }
 
-export function allBlogs(viewer: CurrentUser | null, limit = limits.listPage) {
+export function allBlogs(
+  viewer: CurrentUser | null,
+  options: PageOptions = {},
+  order: BlogSortOrder = "latest",
+  searchQuery = "",
+  category?: BlogCategory
+) {
+  const limit = normalizePageLimit(options.limit, limits.listPage, limits.listPage);
   const visible = profileVisibilitySql(viewer);
   const visibility = blogVisibilitySql(viewer);
-  return blogRows(
-    `WHERE ${visible.sql} AND ${visibility.sql}
-    ${blogDiscoveryOrder} LIMIT ?`,
+
+  let filterSql = `WHERE ${visible.sql} AND ${visibility.sql}`;
+  const params: unknown[] = [...visible.params, ...visibility.params];
+
+  if (category) {
+    filterSql += " AND b.category = ?";
+    params.push(category);
+  }
+
+  if (searchQuery && searchQuery.trim()) {
+    const pattern = containsLikePattern(searchQuery.trim());
+    filterSql += ` AND (b.title LIKE ? ${likeEscapeClause} OR b.body_html LIKE ? ${likeEscapeClause})`;
+    params.push(pattern, pattern);
+  }
+
+  const before = keysetBeforeCondition(decodeKeysetCursor(options.before), "b.created_at", "b.id");
+  const orderBy = order === "popular" ? blogDiscoveryOrder : blogLatestOrder;
+
+  const rows = blogRows(
+    `${filterSql} ${before.sql} ${orderBy} LIMIT ?`,
     viewer,
-    ...visible.params,
-    ...visibility.params,
-    limit
+    ...params,
+    ...before.params,
+    limit + 1
   );
+
+  return pageFromRows(rows, limit);
 }
 
-export function blogsByCategory(category: BlogCategory, viewer: CurrentUser | null, limit = limits.listPage) {
-  const visible = profileVisibilitySql(viewer);
-  const visibility = blogVisibilitySql(viewer);
-  return blogRows(
-    `WHERE b.category = ? AND ${visible.sql} AND ${visibility.sql}
-    ${blogDiscoveryOrder} LIMIT ?`,
-    viewer,
-    category,
-    ...visible.params,
-    ...visibility.params,
-    limit
-  );
+export function blogsByCategory(
+  category: BlogCategory,
+  viewer: CurrentUser | null,
+  options: PageOptions = {},
+  order: BlogSortOrder = "latest",
+  searchQuery = ""
+) {
+  return allBlogs(viewer, options, order, searchQuery, category);
 }
 
 export function getBlog(id: number, viewer: CurrentUser | null = null) {
@@ -84,20 +148,9 @@ export function proppedBlogsForViewer(viewer: CurrentUser, limit = limits.listPa
 }
 
 export function searchBlogs(query: string, viewer: CurrentUser | null, limit = limits.listPage) {
-  const pattern = containsLikePattern(query);
-  const visible = profileVisibilitySql(viewer);
-  const visibility = blogVisibilitySql(viewer);
+  const page = allBlogs(viewer, { limit }, "latest", query);
   return {
-    blogs: blogRows(
-      `WHERE ${visible.sql} AND ${visibility.sql} AND (b.title LIKE ? ${likeEscapeClause} OR b.body_html LIKE ? ${likeEscapeClause})
-      ORDER BY b.created_at DESC LIMIT ?`,
-      viewer,
-      ...visible.params,
-      ...visibility.params,
-      pattern,
-      pattern,
-      limit
-    )
+    blogs: page.items
   };
 }
 

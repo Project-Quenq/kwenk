@@ -8,7 +8,6 @@ import {
   addBlogComment,
   addBlogProp,
   allBlogs,
-  blogsByCategory,
   blogCommentsFor,
   canViewBlog,
   createBlog,
@@ -23,7 +22,7 @@ import { addCommentFromForm, deleteCommentFromRoute } from "../../server/comment
 import { field } from "../../server/forms.js";
 import { badFormRequestMessage, localBack, requiredBlogBody, requiredField, routeId, verifiedActionForm } from "../../server/http.js";
 import { canDeleteAsOwnerOrModerator, canModerateAuthor } from "../../server/moderation/guards.js";
-import { previewFromRows } from "../../server/pagination.js";
+import { beforeParam, paginationHref, previewFromRows } from "../../server/pagination.js";
 import { defaultBlogCategory, isBlogCategory, limits } from "../../policy.js";
 import type { AppBindings, AppContext } from "../../server/context.js";
 import { BlogEntryPage, BlogListPage, EditBlogPage, NewBlogPage } from "../../views/blogs/index.js";
@@ -32,15 +31,27 @@ import { blogCommentsPath, blogPath, profileBlogPath } from "../../paths.js";
 export function registerBlogRoutes(app: Hono<AppBindings>) {
   app.get("/blog", (c) => {
     const user = currentUser(c);
+    const before = c.req.query(beforeParam);
+    const searchQuery = c.req.query("q") || c.req.query("search") || "";
+    const sortQuery = c.req.query("sort") === "popular" ? "popular" : "latest";
+
+    const page = allBlogs(user, { before, limit: limits.listPage }, sortQuery, searchQuery);
+    const basePath = "/blog";
+
     return c.html(
       <BlogListPage
         user={user}
         title="Blog"
-        blogs={allBlogs(user)}
+        blogs={page.items}
+        currentSort={sortQuery}
+        currentSearch={searchQuery}
+        nextHref={page.nextCursor ? buildBlogPaginationUrl(basePath, page.nextCursor, sortQuery, searchQuery) : null}
+        resetHref={before ? buildBlogPaginationUrl(basePath, null, sortQuery, searchQuery) : null}
         seo={{ canonicalPath: "/blog", description: "Read public blog entries from the community." }}
       />
     );
   });
+
   app.get("/blog/new", (c) => c.html(<NewBlogPage user={requireAuth(c)} csrf={csrfToken(c)} />));
   app.post("/blog/new", async (c) => {
     const user = requireAuth(c);
@@ -56,27 +67,42 @@ export function registerBlogRoutes(app: Hono<AppBindings>) {
       throw error;
     }
   });
+
   app.get("/blog/category/:category", (c) => {
     const user = currentUser(c);
     const category = decodeCategory(c.req.param("category"));
+    const before = c.req.query(beforeParam);
+    const searchQuery = c.req.query("q") || c.req.query("search") || "";
+    const sortQuery = c.req.query("sort") === "popular" ? "popular" : "latest";
+
+    const page = allBlogs(user, { before, limit: limits.listPage }, sortQuery, searchQuery, category);
+    const basePath = `/blog/category/${encodeURIComponent(category)}`;
+
     return c.html(
       <BlogListPage
         user={user}
         title={`Blogs in ${category}`}
-        blogs={blogsByCategory(category, user)}
+        blogs={page.items}
+        currentCategory={category}
+        currentSort={sortQuery}
+        currentSearch={searchQuery}
+        nextHref={page.nextCursor ? buildBlogPaginationUrl(basePath, page.nextCursor, sortQuery, searchQuery) : null}
+        resetHref={before ? buildBlogPaginationUrl(basePath, null, sortQuery, searchQuery) : null}
         seo={{
-          canonicalPath: `/blog/category/${encodeURIComponent(category)}`,
+          canonicalPath: basePath,
           description: `Read public ${category} blog entries from the community.`
         }}
       />
     );
   });
+
   app.get("/b/:id/edit", (c) => {
     const user = requireAuth(c);
     const blog = requireBlog(routeId(c));
     requireOwnerOrAdmin(user, blog.authorId, "You cannot edit this blog entry.");
     return c.html(<EditBlogPage user={user} csrf={csrfToken(c)} blog={blog} />);
   });
+
   app.post("/b/:id/edit", async (c) => {
     const user = requireAuth(c);
     const form = await verifiedActionForm(c, "content.write");
@@ -93,8 +119,10 @@ export function registerBlogRoutes(app: Hono<AppBindings>) {
       throw error;
     }
   });
+
   app.post("/b/:id/prop", async (c) => blogPropAction(c, addBlogProp, notifyBlogProp));
   app.post("/b/:id/unprop", async (c) => blogPropAction(c, removeBlogProp));
+
   app.post("/b/:id/delete", async (c) => {
     const user = requireAuth(c);
     await verifiedActionForm(c, "content.write");
@@ -106,6 +134,7 @@ export function registerBlogRoutes(app: Hono<AppBindings>) {
     if (elevated) audit(user.id, "delete", "blog", blog.id, "", auditMetadata);
     return c.redirect(profileBlogPath(requireProfile(blog.authorId)));
   });
+
   app.post("/b/:id/comments", async (c) => {
     const user = requireAuth(c);
     const form = await verifiedActionForm(c, "comment.create");
@@ -124,9 +153,11 @@ export function registerBlogRoutes(app: Hono<AppBindings>) {
       afterAdd: notifyBlogComment
     });
   });
+
   app.post("/b/comments/:id/delete", (c) =>
     deleteCommentFromRoute(c, { subjectType: "blog_comment", delete: deleteBlogComment, fallback: "/blog", redirectFragment: anchors.comments })
   );
+
   app.get("/b/:id/comments", (c) => blogPage(c, true));
   app.get("/b/:id", (c) => blogPage(c));
 }
@@ -202,4 +233,14 @@ function privacyLevel(form: Record<string, unknown>) {
   const value = Number(field(form, "privacy") || "0");
   if (Number.isInteger(value) && value >= 0 && value <= 2) return value;
   throw new HTTPException(400, { message: "Unknown blog privacy setting." });
+}
+
+function buildBlogPaginationUrl(basePath: string, cursor: string | null, sort: string, search: string) {
+  const params = new URLSearchParams();
+  if (cursor) params.set("before", cursor);
+  if (sort === "popular") params.set("sort", "popular");
+  if (search && search.trim()) params.set("q", search.trim());
+
+  const query = params.toString();
+  return query ? `${basePath}?${query}` : basePath;
 }

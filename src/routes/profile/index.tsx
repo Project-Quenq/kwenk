@@ -2,7 +2,7 @@ import type { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { requireAuth, requireProfile, visibleProfile } from "../../server/access.js";
 import { csrfToken } from "../../server/auth/session.js";
-import { blogsForUser } from "../../server/db/blogs/index.js";
+import { blogsForUserPage } from "../../server/db/blogs/index.js";
 import { brandingSettings } from "../../server/db/branding.js";
 import { listGroups } from "../../server/db/groups.js";
 import { feedPageForUser } from "../../server/db/posts/index.js";
@@ -16,7 +16,7 @@ import { limits, validHandle } from "../../policy.js";
 import { isSkinColorGenerateIntent, skinColorPaletteFromHtml, skinStyleCodeFromColorForm } from "../../skins/colorPalette.js";
 import { SocialLinkValidationError } from "../../socialLinks.js";
 import type { CurrentUser } from "../../currentUser.js";
-import { profilePath } from "../../paths.js";
+import { profileBlogPath, profilePath } from "../../paths.js";
 import type { AppBindings, AppContext } from "../../server/context.js";
 import { BlogListPage } from "../../views/blogs/index.js";
 import { HomePage } from "../../views/home/index.js";
@@ -45,7 +45,7 @@ export function registerProfileRoutes(app: Hono<AppBindings>) {
         newestGroupsHref={newestGroupsPreview.hasMore ? "/groups" : null}
         friendCount={friendCountFor(user.id, user)}
         pending={pendingRequestsFor(user.id)}
-        blogs={blogsForUser(user.id, user)}
+        blogs={blogsForUserPage(user.id, user).items}
         feedPosts={feedPage.items}
         feedHref={feedPage.nextCursor ? "/feed" : null}
       />
@@ -106,15 +106,29 @@ export function registerProfileRoutes(app: Hono<AppBindings>) {
   app.get("/u/:handle/blog", (c) => {
     const profile = profileForHandle(c);
     const { user } = visibleProfile(c, profile.id);
+    const before = c.req.query(beforeParam);
+    const searchQuery = c.req.query("q") || c.req.query("search") || "";
+    const sortQuery = c.req.query("sort") === "popular" ? "popular" : "latest";
+
+    const basePath = profileBlogPath(profile);
+    const page = blogsForUserPage(profile.id, user, { before, limit: limits.listPage }, sortQuery, searchQuery);
+
     return c.html(
       <BlogListPage
         user={user}
         title={`${profile.username}'s blog`}
-        blogs={blogsForUser(profile.id, user, limits.listPage, "engagement")}
+        blogs={page.items}
+        basePath={basePath}
+        currentSort={sortQuery}
+        currentSearch={searchQuery}
+        isUserBlog={true}
+        userProfile={profile}
+        nextHref={page.nextCursor ? buildBlogPaginationUrl(basePath, page.nextCursor, sortQuery, searchQuery) : null}
+        resetHref={before ? buildBlogPaginationUrl(basePath, null, sortQuery, searchQuery) : null}
         seo={
           profile.private
             ? { noindex: true }
-            : { canonicalPath: `${profilePath(profile)}/blog`, description: `Read ${profile.username}'s public blog entries.` }
+            : { canonicalPath: basePath, description: `Read ${profile.username}'s public blog entries.` }
         }
       />
     );
@@ -181,4 +195,14 @@ function profileForHandle(c: AppContext) {
   const profile = profileByHandle(handle);
   if (!profile) throw new HTTPException(404, { message: "User not found." });
   return profile;
+}
+
+function buildBlogPaginationUrl(basePath: string, cursor: string | null, sort: string, search: string) {
+  const params = new URLSearchParams();
+  if (cursor) params.set("before", cursor);
+  if (sort === "popular") params.set("sort", "popular");
+  if (search && search.trim()) params.set("q", search.trim());
+
+  const query = params.toString();
+  return query ? `${basePath}?${query}` : basePath;
 }
