@@ -14,65 +14,72 @@ type StaticPage = {
 };
 
 const staticPages: readonly StaticPage[] = [
-  {
-    path: "/about",
-    title: () => "About Quenq",
-    body: () => (
-      <>
-        <p><strong>Welcome to Quenq!</strong> We are a nostalgic social network and digital community dedicated to bringing the human element back to the web.</p>
+{
+      path: "/about",
+      title: () => "About Quenq",
+      body: () => (
+        <>
+          <p><strong>Welcome to Quenq.</strong> We are a nostalgic social network and digital community dedicated to bringing the human element back to the web.</p>
 
-        <p>We missed the days when the internet was about creativity, expression, and connecting with friends, rather than algorithms, viral trends, and AI-generated slop. Here, you can claim your piece of the retro web, build a custom HTML/CSS profile page, share your favorite profile music, write blogs, and connect with a community that shares your passion.</p>
+          <h2>What You Can Do Here</h2>
+          <ul>
+            <li style="margin-bottom: 10px;"><strong>Connect & Create:</strong> Write blog diaries, join community groups, leave comments on your friends' walls, and give "props" to content you love. Your feed is strictly chronological. You see what your friends post, exactly when they post it.</li>
+            <li style="margin-bottom: 10px;"><strong>Express Yourself:</strong> Claim your unique handle and build a custom HTML/CSS profile. Pick a theme song, update your "current vibe," and show off your personality.</li>
+            <li style="margin-bottom: 10px;"><strong>The Arcade & Apps:</strong> Play over 1,300 classic Flash games, launch internet artifacts, or boot up <i>Reborn XP</i> (our 1:1 Windows XP recreation) directly in your browser. Discuss high scores and share strategies in the comments under every game.</li>
+          </ul>
 
-        <p>Alongside our social network, Quenq is also home to an interactive digital library. Directly in your browser, you can explore preserved software, run classic operating system simulations like <i>Reborn XP</i>, and play an extensive library of classic Flash arcade games.</p>
+          <h2>From Museum to Metropolis</h2>
+          <p>Quenq originally started as a static digital archive. A quiet museum built to preserve early internet culture. We hosted classic Flash games, internet artifacts, and created simulators like <i>Reborn XP</i> to keep the history of the early web alive and accessible.</p>
+          
+          <p>But we soon realized that preserving the software wasn't enough. What made the old web truly magical wasn't just the games or the aesthetics. It was the <strong>people</strong>. The internet used to be a place of raw creativity, where you could build your own corner of the web and genuinely connect with friends, free from algorithmic feeds, viral engagement farming, and AI-generated content (slop).</p>
+          
+          <p>To bring that back, we launched a social extension called "My Quenq." The response was incredible. The community grew, niche groups were formed, and users spent hours crafting their custom profiles. It became clear that the social experience shouldn't just be an extension; it should be the heart of the platform. So, we merged the two worlds. Today, the social network <em>is</em> Quenq, with our massive interactive library woven directly into its fabric.</p>
 
-        <h2>What You Can Do Here</h2>
-        <ul>
-          <li style="margin-bottom: 10px;"><strong>Custom Social Profiles:</strong> Express yourself freely with custom HTML/CSS profiles, status updates, music players, wall posts, blogs, and community groups.</li>
-          <li style="margin-bottom: 10px;"><strong>The Arcade:</strong> Play over 1,300 classic Flash browser games, preserved using modern WebAssembly emulation so they run natively without plugins or downloads.</li>
-          <li style="margin-bottom: 10px;"><strong>The Apps:</strong> Launch internet artifacts, games and simulators like <i>Reborn XP</i> (our 1:1 Windows XP recreation), console emulators, and web pranks.</li>
-        </ul>
+          <h2>The Name & Symmetry</h2>
+          <p>What does "Quenq" mean? Absolutely nothing. It isn't an acronym, and it doesn't have a hidden translation. (For the record, it's pronounced <em>"kwenk"</em>).</p>
+          <p>When the domain was registered, the name was chosen simply because it is visually and structurally perfect. It is completely symmetrical: the two <strong>q</strong>s act as bookends, the <strong>u</strong> and <strong>n</strong> are upside-down reflections of each other, and they are anchored by the <strong>e</strong> in the center. It's short, memorable, and visually balanced.</p>
 
-        <h2>The Name & Symmetry</h2>
-        <p>When the domain was registered, "quenq" was chosen simply because it is visually and structurally perfect. It is completely symmetrical: the two <strong>q</strong>s act as bookends, the <strong>u</strong> and <strong>n</strong> are upside-down reflections of each other, and they are anchored by the <strong>e</strong> in the center.</p>
+          <h2>Support & Community</h2>
+          <p>Quenq is an independent passion project. We are funded by minimal on-site advertising to keep the platform 100% free for everyone, without paywalls or subscriptions. Registration is currently limited to selected regions to protect the community from spambots and maintain a cozy, high-quality environment.</p>
 
-        <h2>Support & Community</h2>
-        <p>Quenq is an independent passion project funded by minimal on-site advertising to keep the platform 100% free for everyone, without paywalls or subscriptions. Registration is currently limited to selected regions to protect the community from spam bots and maintain a cozy, high-quality environment.</p>
+          <p>Our direction is heavily shaped by our users. Many of the features, artifacts, and games available on the site exist because a member suggested them right here on the platform or in our Discord server.</p>
 
-        <p>Our direction is heavily shaped by our users. Many of the features, artifacts and games available on the site exist because a member suggested them here or in our Discord server.</p>
+          <div style="text-align: center; display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
+            <a href="https://dsc.gg/quenq" target="_blank" class="button">Join our Discord</a>
+            <a href="/signup" class="button button--secondary">Create an account</a>
+          </div>
 
-        <div style="text-align: center; display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
-          <a href="https://dsc.gg/quenq" target="_blank" class="button">Join our Discord</a>
-          <a href="/signup" class="button button--secondary">Create an account</a>
-        </div>
+          <div id="aero-ring">
+            <script src="https://frutigeraeroarchive.org/javascript/aero-webring.js"></script>
+          </div>
 
-        <div id="aero-ring">
-          <script src="https://frutigeraeroarchive.org/javascript/aero-webring.js"></script>
-        </div>
+          <style>{raw(`
+            #aero-ring {
+              background: var(--surface-background-raised);
+              border: var(--border-thin) solid var(--surface-border);
+              border-radius: var(--radius-panel);
+              box-shadow: var(--surface-shadow);
+              font-family: var(--font-body);
+              margin: var(--space-8) auto 0 auto;
+              max-width: 15rem;
+              padding: var(--space-5);
+              text-align: center;
+              color: var(--color-text);
+            }
 
-        <style>{raw(`
-          #aero-ring {
-            background: linear-gradient(to bottom, #404040 0%, #000000 100%);
-            border-radius: 10px;
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5),
-              inset 0 2px 1px rgba(255, 255, 255, 0.15),
-              inset 0 -2px 1px rgba(0, 0, 0, 0.35);
-            font-family: sans-serif;
-            margin: 20px auto 0px auto;
-            max-width: 15rem;
-            padding: 0.75rem;
-            text-align: center;
-          }
+            #aero-ring a {
+              color: var(--color-brand) !important;
+              text-decoration: none;
+              font-weight: bold;
+            }
 
-          #aero-ring a, #aero-ring a:visited {
-            color: white !important;
-          }
-
-          #aero-ring a:focus, #aero-ring a:hover, #aero-ring a:active {
-            color: lightgrey !important;
-          }
-        `)}</style>
-      </>
-    )
+            #aero-ring a:focus, #aero-ring a:hover, #aero-ring a:active {
+              color: var(--color-link-hover) !important;
+              text-decoration: underline;
+            }
+          `)}</style>
+        </>
+      )
   },
   {
     path: "/contact",

@@ -1,7 +1,7 @@
 {
   "name": "Quenq",
   "short_name": "Quenq",
-  "description": "Welcome to Quenq, a creative, nostalgic web community inspired by the early days of the internet. It is a quiet space to express yourself, write blogs, and connect with friends.",
+  "description": "Quenq is a creative, nostalgic social network and web museum. Customize your profile, play classic flash games, write blogs, and connect with friends.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

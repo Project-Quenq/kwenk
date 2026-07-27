@@ -30,7 +30,7 @@ export function siteSeoDescription(settings: SiteSettings) {
 
 export function siteMarketingDescription(settings: Pick<SiteSettings, "identity">) {
   const name = settings.identity.name.trim() || "Quenq";
-  return `${name} is a nostalgic social network inspired by the early days of the web.`;
+  return `${name} is a nostalgic social network and interactive web archive inspired by the early days of the web.`;
 }
 
 export function seoText(input: string, maxLength = 180) {
