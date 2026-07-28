@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { currentUser } from "../../server/auth/session.js";
 import { Layout, PageFrame, SplitLayout, SplitPane } from "../../shell/index.js";
-import { AdBanner } from "../../views/home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../../views/home/infoPanels.js";
 import { Icon } from "../../ui/icons.js";
 import type { AppBindings } from "../../server/context.js";
 import { preservedAppsList, directoryAppsList } from "./appShared.js";
@@ -76,7 +76,7 @@ export function registerAppsRoutes(app: Hono<AppBindings>) {
                 ))}
               </div>
 
-              <AdBanner />
+              <AdBannerMain />
             </SplitPane>
 
           </SplitLayout>

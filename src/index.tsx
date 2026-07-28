@@ -12,7 +12,6 @@ import { initializeDatabase } from "./server/db/schema.js";
 import { siteSettings } from "./server/db/siteSettings.js";
 import { env } from "./server/env.js";
 import { statusTitle } from "./server/http.js";
-import { blockedCrawlerMiddleware } from "./server/indexing/crawlers.js";
 import { indexingMiddleware } from "./server/indexing/middleware.js";
 import { limits } from "./policy.js";
 import { plainPage } from "./server/render.js";
@@ -32,6 +31,7 @@ app.use(async (c, next) => {
     for (const [name, value] of Object.entries(securityHeaders)) c.header(name, value);
   }
 });
+
 app.use(
   bodyLimit({
     maxSize: limits.requestBytes,
@@ -41,7 +41,6 @@ app.use(
   })
 );
 
-app.use(blockedCrawlerMiddleware());
 app.use("/static/*", serveStatic({ root: "./public" }));
 registerSystemRoutes(app);
 app.use(loadSession);
@@ -57,6 +56,7 @@ app.onError((error, c) => {
   console.error(error);
   return plainPage(c, "Something went wrong", "The server could not complete the request.", 500);
 });
+
 app.notFound((c) => plainPage(c, "Not found", "The page does not exist.", 404));
 
 for (const registerRoutes of routeRegistrars) {

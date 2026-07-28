@@ -1,7 +1,7 @@
 import type { CurrentUser } from "../../currentUser.js";
 import { Layout, PageFrame, SplitLayout, SplitPane } from "../../shell/index.js";
 import { Panel } from "../../ui/panels.js";
-import { AdBanner } from "../../views/home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../../views/home/infoPanels.js";
 import { preservedAppsList } from "./appShared.js";
 
 export function renderAngryBirdsPage(user: CurrentUser | null) {
@@ -93,7 +93,7 @@ export function renderAngryBirdsPage(user: CurrentUser | null) {
               <p>This is the definitive way to experience a piece of web gaming history, fully unlocked and ready to play exclusively on Quenq. It is also available to download directly from the App Market inside our <a href="/apps/reborn-xp">Reborn XP simulator</a>.</p>
             </Panel>
 
-            <AdBanner />
+            <AdBannerMain />
 
             <Panel title="You Might Also Like..." tone="soft">
               <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); width: 100%;">

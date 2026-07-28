@@ -10,7 +10,7 @@ import { LocalizedTime } from "../../ui/time.js";
 import { sqlite } from "../../server/db/client.js";
 import { ActionLabel } from "../../ui/actions.js";
 import { PaginationNav } from "../../ui/pagination.js";
-import { AdBanner } from "../home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../home/infoPanels.js";
 
 type BlogListPageProps = {
   user: CurrentUser | null;
@@ -149,7 +149,7 @@ export function BlogListPage(props: BlogListPageProps) {
               resetLabel="Newest entries" 
             />
 
-            <AdBanner />
+            <AdBannerMain />
           </SplitPane>
 
         </SplitLayout>

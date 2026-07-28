@@ -5,7 +5,7 @@ import { Panel } from "../../ui/panels.js";
 import { CommentPanel } from "../../ui/comments.js";
 import { PropAction, PropCount } from "../../ui/engagement.js";
 import { Icon } from "../../ui/icons.js";
-import { AdBanner } from "../home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../home/infoPanels.js";
 
 type GamePageProps = {
   user: CurrentUser | null;
@@ -164,7 +164,7 @@ export function GamePlayPage(props: GamePageProps) {
               reportType="game_comment"
             />
 
-            <AdBanner />
+            <AdBannerMain />
 
             <Panel title="You Might Also Like..." tone="soft">
               {props.relatedGames.length ? (

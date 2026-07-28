@@ -14,7 +14,6 @@ type LandingPageProps = {
   user: CurrentUser | null;
   csrf: string;
   settings: SiteSettings;
-  admin: PersonCard | null;
   newest: PersonCard[];
   newestGroups: GroupItem[];
   spotlightGames: GameItem[];
@@ -39,7 +38,7 @@ export function LandingPage(props: LandingPageProps) {
         <SplitPane area="main">
           <PeopleBox 
             title="Cool new people" 
-            people={props.user ? props.newest : coolNewPeople(props.newest, props.admin)} 
+            people={coolNewPeople(props.newest)} 
             more="/browse" 
             singleLine 
           />

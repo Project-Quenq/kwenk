@@ -1,6 +1,6 @@
 import type { CurrentUser } from "../../currentUser.js";
 import { Layout, PageFrame, SplitLayout, SplitPane } from "../../shell/index.js";
-import { AdBanner } from "../../views/home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../../views/home/infoPanels.js";
 
 export function renderFakeUpdatesPage(user: CurrentUser | null) {
   const fakeOS = [
@@ -57,7 +57,7 @@ export function renderFakeUpdatesPage(user: CurrentUser | null) {
               ))}
             </div>
 
-            <AdBanner />
+            <AdBannerMain />
           </SplitPane>
 
         </SplitLayout>

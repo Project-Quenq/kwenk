@@ -4,7 +4,7 @@ import { limits } from "../../policy.js";
 import { Layout, PageFrame, SplitLayout, SplitPane } from "../../shell/index.js";
 import { ArcadePagination } from "../../ui/arcadePagination.js";
 import { ActionLabel } from "../../ui/actions.js";
-import { AdBanner } from "../home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../home/infoPanels.js";
 
 type ArcadePageProps = {
   user: CurrentUser | null;
@@ -136,7 +136,7 @@ export function ArcadeListPage(props: ArcadePageProps) {
               searchQuery={props.currentSearch}
             />
 
-            <AdBanner />
+            <AdBannerMain />
           </SplitPane>
 
         </SplitLayout>

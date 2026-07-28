@@ -9,6 +9,7 @@ export function Footer({ contact, dataAttributes }: { contact: SiteContactSettin
       <ul class="site-footer__links link-list">
         <li><a href="/about">About</a></li>
         <li><a href="/rules">Rules</a></li>
+        <li><a href="https://dsc.gg/quenq" target="_blank" rel="noopener noreferrer">Discord</a></li>
         <li><a href="/terms">Terms</a></li>
         <li><a href="/privacy">Privacy</a></li>
         <li><a href="/contact">Contact</a></li>

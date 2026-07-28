@@ -16,9 +16,6 @@ export const noindexHeader = "noindex, nofollow, noarchive, noimageindex";
 export const staticContentPaths = [
   "/",
   "/about",
-  "/source",
-  "/license",
-  "/credits",
   "/contact",
   "/privacy",
   "/terms",

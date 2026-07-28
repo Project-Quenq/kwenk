@@ -16,7 +16,7 @@ import { seoText, type PageSeo } from "../../settings/seo.js";
 import { AuthorSkinStyles } from "../../skins/rendering.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
 import { LocalizedTime } from "../../ui/time.js";
-import { AdBanner } from "../home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../home/infoPanels.js";
 
 export function BlogEntryPage(props: {
   user: CurrentUser | null;
@@ -84,7 +84,7 @@ export function BlogEntryPage(props: {
           {engagementActions || managementActions ? <ActionBar className="content-actions" primary={engagementActions} secondary={managementActions} /> : null}
           <UserContent className="article-content" html={props.blog.bodyHtml} itemprop="articleBody" />
           
-          <AdBanner />
+          <AdBannerMain />
           
           {props.blog.commentsEnabled ? (
             <CommentPanel

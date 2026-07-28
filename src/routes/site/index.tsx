@@ -25,11 +25,11 @@ const staticPages: readonly StaticPage[] = [
           <ul>
             <li style="margin-bottom: 10px;"><strong>Connect & Create:</strong> Write blog diaries, join community groups, leave comments on your friends' walls, and give "props" to content you love. Your feed is strictly chronological. You see what your friends post, exactly when they post it.</li>
             <li style="margin-bottom: 10px;"><strong>Express Yourself:</strong> Claim your unique handle and build a custom HTML/CSS profile. Pick a theme song, update your "current vibe," and show off your personality.</li>
-            <li style="margin-bottom: 10px;"><strong>The Arcade & Apps:</strong> Play over 1,300 classic Flash games, launch internet artifacts, or boot up <i>Reborn XP</i> (our 1:1 Windows XP recreation) directly in your browser. Discuss high scores and share strategies in the comments under every game.</li>
+            <li style="margin-bottom: 10px;"><strong>The Arcade & Apps:</strong> Play over 1,300 classic Flash games, launch internet artifacts, emulators, games, web pranks, and simulators like <i>Reborn XP</i> (our 1:1 Windows XP recreation) directly in your browser.</li>
           </ul>
 
           <h2>From Museum to Metropolis</h2>
-          <p>Quenq originally started as a static digital archive. A quiet museum built to preserve early internet culture. We hosted classic Flash games, internet artifacts, and created simulators like <i>Reborn XP</i> to keep the history of the early web alive and accessible.</p>
+          <p>Quenq originally started as a digital archive. A quiet museum built to preserve early internet culture. We hosted classic Flash games, internet artifacts, and created simulators like <i>Reborn XP</i> to keep the history of the early web alive and accessible.</p>
           
           <p>But we soon realized that preserving the software wasn't enough. What made the old web truly magical wasn't just the games or the aesthetics. It was the <strong>people</strong>. The internet used to be a place of raw creativity, where you could build your own corner of the web and genuinely connect with friends, free from algorithmic feeds, viral engagement farming, and AI-generated content (slop).</p>
           

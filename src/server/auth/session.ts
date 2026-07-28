@@ -69,12 +69,6 @@ export function csrfToken(c: AppContext) {
 }
 
 export function assertCsrf(c: AppContext, formToken: unknown) {
-  // If the request is from Google's AdSense bot, bypass the CSRF check safely
-  const ua = c.req.header("user-agent") || "";
-  if (ua.includes("Mediapartners-Google") || ua.includes("Google-Adwords")) {
-    return;
-  }
-
   const expected = csrfToken(c);
   if (typeof formToken !== "string" || !safeEqual(expected, formToken)) {
     throw new HTTPException(403, { message: "Invalid CSRF token." });

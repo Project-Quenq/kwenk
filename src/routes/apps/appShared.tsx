@@ -2,7 +2,7 @@ import type { CurrentUser } from "../../currentUser.js";
 import { Layout, PageFrame, SplitLayout, SplitPane } from "../../shell/index.js";
 import { Panel } from "../../ui/panels.js";
 import { Icon } from "../../ui/icons.js";
-import { AdBanner } from "../../views/home/infoPanels.js";
+import { AdBanner, AdBannerMain } from "../../views/home/infoPanels.js";
 import type { ViewChild } from "../../ui/types.js";
 
 export type AppItem = {
@@ -252,7 +252,7 @@ export function AppPlayerPage(props: AppPlayerPageProps) {
               {props.fullDescriptionNode}
             </Panel>
 
-            <AdBanner />
+            <AdBannerMain />
 
             <Panel title="You Might Also Like..." tone="soft">
               <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); width: 100%;">

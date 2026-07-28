@@ -101,12 +101,16 @@ export const rateLimits = {
 export type RateLimitAction = keyof typeof rateLimits.actions;
 
 export const blogCategories = [
+  "Animals & pets",
   "Art",
   "Automotive",
+  "Comics & anime",
+  "Fanfiction",
   "Fashion",
   "Financial",
   "Food",
   "Games",
+  "Humanity",
   "Life",
   "Literature",
   "Math & science",
@@ -114,11 +118,11 @@ export const blogCategories = [
   "Music",
   "Paranormal",
   "Politics",
-  "Humanity",
   "Romance",
   "Sports",
   "Technology",
-  "Travel"
+  "Travel",
+  "Writing & poetry"
 ] as const;
 
 export type BlogCategory = (typeof blogCategories)[number];

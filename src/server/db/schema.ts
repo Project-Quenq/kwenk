@@ -477,6 +477,40 @@ BEGIN
 END;
 `;
 
+function ensureBlogsSchemaUpToDate() {
+  const row = sqlite
+    .prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='blogs'")
+    .get() as { sql: string } | undefined;
+
+  if (row && (!row.sql.includes("Fanfiction") || !row.sql.includes("Animals & pets"))) {
+    sqlite.transaction(() => {
+      sqlite.exec("DROP TRIGGER IF EXISTS notifications_blogs_delete;");
+      sqlite.exec("ALTER TABLE blogs RENAME TO blogs_old;");
+
+      sqlite.exec(`
+        CREATE TABLE blogs (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          title TEXT NOT NULL,
+          body_html TEXT NOT NULL,
+          category TEXT NOT NULL DEFAULT ${sqlString(defaultBlogCategory)} CHECK (category IN (${blogCategoryCheck})),
+          privacy_level INTEGER NOT NULL DEFAULT 0 CHECK (privacy_level IN (0, 1, 2)),
+          pinned INTEGER NOT NULL DEFAULT 0 CHECK (pinned IN (0, 1)),
+          comments_enabled INTEGER NOT NULL DEFAULT 1 CHECK (comments_enabled IN (0, 1)),
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS blogs_author_idx ON blogs(author_id);
+        CREATE INDEX IF NOT EXISTS blogs_feed_idx ON blogs(pinned, created_at);
+        CREATE INDEX IF NOT EXISTS blogs_category_idx ON blogs(category, pinned, created_at);
+      `);
+
+      sqlite.exec("INSERT INTO blogs SELECT * FROM blogs_old;");
+      sqlite.exec("DROP TABLE blogs_old;");
+    })();
+  }
+}
+
 function ensureNotificationsSchemaUpToDate() {
   const row = sqlite
     .prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='notifications'")
@@ -521,6 +555,7 @@ function ensureNotificationsSchemaUpToDate() {
 export function initializeDatabase() {
   ensureRuntimeDirs();
   ensureNotificationsSchemaUpToDate();
+  ensureBlogsSchemaUpToDate();
   sqlite.exec(schemaSql);
   installDefaultAutomodRules();
   installBuiltinSkins();
