@@ -66,5 +66,10 @@ async function mediaFile(c: AppContext, root: string, filename: string) {
 
   c.header("Cache-Control", "public, max-age=86400, s-maxage=2592000");
   c.header("Content-Type", mediaContentTypes.get(extname(filename).toLowerCase()) ?? "application/octet-stream");
-  return c.body(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength));
+
+  const response = c.body(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength));
+  
+  response.headers.delete("set-cookie");
+  
+  return response;
 }

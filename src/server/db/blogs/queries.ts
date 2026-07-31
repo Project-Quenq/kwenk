@@ -14,7 +14,7 @@ import {
 
 const blogLatestOrder = "ORDER BY b.created_at DESC, b.id DESC";
 const userBlogLatestOrder = "ORDER BY b.pinned DESC, b.created_at DESC, b.id DESC";
-const blogPopularOrder = "ORDER BY propsCount DESC, commentCount DESC, b.created_at DESC, b.id DESC";
+const blogPopularOrder = `ORDER BY ((SELECT COUNT(*) FROM blog_props WHERE blog_id = b.id) + (SELECT COUNT(*) FROM blog_comments WHERE blog_id = b.id)) DESC, b.created_at DESC, b.id DESC`;
 
 export type BlogSortOrder = "latest" | "popular";
 
