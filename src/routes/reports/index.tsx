@@ -94,11 +94,6 @@ function assertReportSubject(c: AppContext, user: CurrentUser, subjectType: Repo
     case "message":
       if (!canViewMessage(user.id, subjectId)) throw new HTTPException(404, { message: "Report subject not found." });
       return;
-    case "game": {
-      const game = getGameById(subjectId, user.id);
-      if (!game) throw new HTTPException(404, { message: "Report subject not found." });
-      return;
-    }
     default:
       throw new HTTPException(400, { message: "Unknown report subject." });
   }

@@ -3,7 +3,7 @@ import { cssCustomPropertyDeclarations } from "../theme/colorPalette.js";
 
 const builtinSkinAuthor = {
   name: "quenq",
-  url: "https://my.quenq.com/u/quenq"
+  url: "https://kwenk.com/u/quenq"
 } as const;
 
 export type BuiltinSkinDefinition = {

@@ -29,8 +29,8 @@ export function siteSeoDescription(settings: SiteSettings) {
 }
 
 export function siteMarketingDescription(settings: Pick<SiteSettings, "identity">) {
-  const name = settings.identity.name.trim() || "Quenq";
-  return `${name} is a nostalgic social network and interactive web archive inspired by the early days of the web.`;
+  const name = settings.identity.name.trim() || "Kwenk";
+  return `${name} is a nostalgic social network inspired by the early days of the web.`;
 }
 
 export function seoText(input: string, maxLength = 180) {
@@ -83,7 +83,7 @@ export function siteWebManifest(settings: SiteSettings, palette: ColorPalette) {
 export function siteSocialPreviewSvg(settings: SiteSettings, palette: ColorPalette) {
   const background = headerChromeColor(palette);
   const foreground = palette.chromeText;
-  const name = "quenq.com";
+  const name = "kwenk.com";
   const tagline = (settings.identity.tagline).toLowerCase();
 
   const nameSize = 96;
@@ -104,7 +104,7 @@ export function siteSocialPreviewSvg(settings: SiteSettings, palette: ColorPalet
     `<rect width="1200" height="630" fill="${background}" />`,
 
     `<g mask="url(#giantLogoMask)">`,
-      `<g transform="translate(296, 11) scale(38)" color="#ffffff" fill="#ffffff" fill-opacity="0.14">`,
+      `<g transform="translate(232, -53) scale(46)" color="#ffffff" fill="#ffffff" fill-opacity="0.14">`,
         brandIconShapeSvg,
       `</g>`,
     `</g>`,

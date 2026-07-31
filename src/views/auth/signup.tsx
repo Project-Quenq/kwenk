@@ -23,14 +23,14 @@ export function SignUpPage(props: {
           
           <div id="blocked-message" style="display: none; flex-direction: column; text-align: center; background: var(--color-danger-soft); border-color: var(--color-danger); color: var(--color-danger-text); padding: 20px; border-radius: var(--radius-panel);" class="welcome">
              <p style="margin: 0 0 10px 0;"><strong>Registration is not available in your region yet.</strong></p>
-             <p style="margin: 0;">We are currently limiting registrations to specific regions as we expand. You can still access our full collection of classic games, simulators, and apps without an account.</p>
+             <p style="margin: 0;">We are currently limiting registrations to specific regions as we expand. You can still access our full collection of classic Flash games without an account.</p>
           </div>
 
           <div id="signup-form-container" style="display: contents;">
             {props.blocked ? (
               <div class="welcome" style="flex-direction: column; text-align: center; background: var(--color-danger-soft); border-color: var(--color-danger); color: var(--color-danger-text); padding: 20px; border-radius: var(--radius-panel);">
                 <p style="margin: 0 0 10px 0;"><strong>Registration is not available in your region yet.</strong></p>
-                <p style="margin: 0;">We are currently limiting registrations to specific regions as we expand. You can still access our full collection of classic games, simulators, and apps without an account.</p>
+                <p style="margin: 0;">We are currently limiting registrations to specific regions as we expand. You can still access our full collection of classic Flash games without an account.</p>
               </div>
             ) : (
               <>
@@ -39,7 +39,7 @@ export function SignUpPage(props: {
                     <li>Custom profiles and wall posts</li>
                     <li>Blogs and groups</li>
                     <li>No algorithmic feeds or AI slop</li>
-                    <li>Classic retro games and apps</li>
+                    <li>Free classic Flash games</li>
                   </ul>
                 </Panel>
 

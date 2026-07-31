@@ -1,6 +1,6 @@
 # Threat Model
 
-Quenq intentionally allows user-controlled profiles. That makes security boundaries explicit and non-optional.
+Kwenk intentionally allows user-controlled profiles. That makes security boundaries explicit and non-optional.
 
 ## Assets
 
@@ -94,7 +94,7 @@ Controls:
 - random filenames;
 - separate upload buckets for profile images, post images, and theme songs;
 - uploads stored under the configured upload directory;
-- production deployment docs place uploads under `/var/lib/quenq/uploads`;
+- production deployment docs place uploads under `/var/lib/kwenk/uploads`;
 - local development defaults use `data/uploads`, which is ignored by git.
 
 ### Authorization Bypass

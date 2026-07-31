@@ -21,7 +21,7 @@ function urlEnv(name: string, fallback: string) {
   }
 }
 
-const baseUrl = urlEnv("QUENQ_BASE_URL", "http://localhost:3000");
+const baseUrl = urlEnv("KWENK_BASE_URL", "http://localhost:3000");
 const parsedBaseUrl = new URL(baseUrl);
 
 export const env = {
@@ -29,17 +29,17 @@ export const env = {
   baseOrigin: parsedBaseUrl.origin,
   baseHostname: parsedBaseUrl.hostname || "localhost",
   secureCookies: parsedBaseUrl.protocol === "https:",
-  databasePath: nonEmptyEnv("QUENQ_DATABASE_PATH", "./data/quenq.sqlite"),
-  uploadDir: nonEmptyEnv("QUENQ_UPLOAD_DIR", "./data/uploads"),
-  adminUserId: integerEnv("QUENQ_ADMIN_USER_ID", 1, 1),
-  smtpHost: process.env.QUENQ_SMTP_HOST ?? "",
-  smtpPort: integerEnv("QUENQ_SMTP_PORT", 587, 1, 65535),
-  smtpUser: process.env.QUENQ_SMTP_USER ?? "",
-  smtpPassword: process.env.QUENQ_SMTP_PASSWORD ?? "",
-  smtpFrom: process.env.QUENQ_SMTP_FROM ?? "",
-  smtpSecure: process.env.QUENQ_SMTP_SECURE === "1",
-  smtpStartTls: process.env.QUENQ_SMTP_STARTTLS !== "0",
-  mediaConcurrency: integerEnv("QUENQ_MEDIA_CONCURRENCY", 1, 1, 8),
+  databasePath: nonEmptyEnv("KWENK_DATABASE_PATH", "./data/kwenk.sqlite"),
+  uploadDir: nonEmptyEnv("KWENK_UPLOAD_DIR", "./data/uploads"),
+  adminUserId: integerEnv("KWENK_ADMIN_USER_ID", 1, 1),
+  smtpHost: process.env.KWENK_SMTP_HOST ?? "",
+  smtpPort: integerEnv("KWENK_SMTP_PORT", 587, 1, 65535),
+  smtpUser: process.env.KWENK_SMTP_USER ?? "",
+  smtpPassword: process.env.KWENK_SMTP_PASSWORD ?? "",
+  smtpFrom: process.env.KWENK_SMTP_FROM ?? "",
+  smtpSecure: process.env.KWENK_SMTP_SECURE === "1",
+  smtpStartTls: process.env.KWENK_SMTP_STARTTLS !== "0",
+  mediaConcurrency: integerEnv("KWENK_MEDIA_CONCURRENCY", 1, 1, 8),
   port: integerEnv("PORT", 3000, 0, 65535),
   host: nonEmptyEnv("HOST", "0.0.0.0")
 };

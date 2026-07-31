@@ -15,7 +15,6 @@ export const pageLinks = {
   settings: { label: "Account settings", href: "/settings" },
   skins: { label: "Skins", href: "/skins" },
   arcade: { label: "Arcade", href: "/arcade" },
-  apps: { label: "Apps", href: "/apps" }
 } as const;
 
 export type PageLinkKey = keyof typeof pageLinks;
@@ -23,7 +22,6 @@ export type PageLinkKey = keyof typeof pageLinks;
 export const mainNavPageOrder = [
   "home",
   "arcade",
-  "apps",
   "feed",
   "messages",
   "groups",
@@ -31,5 +29,6 @@ export const mainNavPageOrder = [
   "blog",
   "skins",
   "favorites",
-  "props"
+  "props",
+  "about"
 ] as const satisfies readonly PageLinkKey[];

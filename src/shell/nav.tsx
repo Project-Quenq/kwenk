@@ -49,7 +49,7 @@ export function Nav({ hideThemeToggle, identity, skinActive, user }: { hideTheme
             <a class="brand-link" href="/" aria-label={identity.name}>
               <SvgIcon svg={identity.headerIconSvg} />
               <span class="brand-link__copy">
-                <span class="brand-link__name">quenq.com</span>
+                <span class="brand-link__name">kwenk.com</span>
                 {identity.tagline ? <span class="brand-link__tagline">{identity.tagline}</span> : null}
               </span>
             </a>

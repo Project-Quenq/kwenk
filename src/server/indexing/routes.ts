@@ -24,8 +24,7 @@ export const staticContentPaths = [
   "/browse",
   "/blog",
   "/skins",
-  "/arcade",
-  "/apps"
+  "/arcade"
 ] as const;
 
 const staticContentPathSet = new Set<string>(staticContentPaths);
@@ -53,12 +52,6 @@ function resolveIndexingPath(path: string): IndexingDecision {
   if (arcadeGame !== null) {
     const slug = decodeSegment(arcadeGame);
     return slug ? index(`/arcade/${slug}`) : noindex("invalid game slug");
-  }
-
-  const appPage = routeSuffix(path, "/apps/");
-  if (appPage !== null) {
-    const slug = decodeSegment(appPage);
-    return slug ? index(`/apps/${slug}`) : noindex("invalid app slug");
   }
 
   const profile = profileRoute(path);

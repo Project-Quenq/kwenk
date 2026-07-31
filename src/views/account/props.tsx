@@ -22,7 +22,7 @@ export function PropsPage(props: { user: CurrentUser; csrf: string; posts: PostI
           <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); width: 100%;">
             {props.games.map((game) => {
               const slug = game.url.split("/").pop() ?? "";
-              const cdnThumbnail = `https://archive.quenq.com/arcade/data/${game.thumbnail}`;
+              const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
               return (
                 <article key={game.id} class="content-card" style="padding: 0; border-radius: var(--radius-panel); overflow: hidden;">
                   <a 

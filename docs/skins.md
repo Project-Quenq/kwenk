@@ -1,6 +1,6 @@
 # Profile Skins
 
-Profile skins customize quenq profile pages with sanitized HTML and passive CSS.
+Profile skins customize Kwenk profile pages with sanitized HTML and passive CSS.
 
 Skins are edited in the profile editor under **Skin HTML** and shared from **Skins -> Submit skin**.
 

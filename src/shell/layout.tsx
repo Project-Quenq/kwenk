@@ -65,16 +65,16 @@ export function Layout(props: {
             {props.head}
 
             {/* Google Analytics */}
-            <script async src="https://www.googletagmanager.com/gtag/js?id=G-FHVE5R5GH8"></script>
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-YF5ZVY71FC"></script>
             <script>{raw(`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-FHVE5R5GH8');
+              gtag('config', 'G-YF5ZVY71FC');
             `)}</script>
 
             {/* Google AdSense */}
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9156391108980330" crossorigin="anonymous"></script>
+            
           </head>
           <body {...props.bodyAttributes}>
             <div class="master-container" {...skinPart("shell")}>

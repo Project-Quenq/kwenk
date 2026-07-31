@@ -3,7 +3,7 @@ import { getCookie, setCookie } from "hono/cookie";
 import { env } from "./env.js";
 import type { AppContext } from "./context.js";
 
-const captchaCookieName = "quenq_captcha";
+const captchaCookieName = "kwenk_captcha";
 
 export function generateCaptcha(c: AppContext) {
   const captcha = svgCaptcha.create({

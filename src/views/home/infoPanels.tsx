@@ -13,13 +13,13 @@ export const landingCards = [
   },
   {
     title: "No feed algorithms",
-    body: "See posts in the natural chronological order they are written. We do not use algorithms to manipulate your feed, push viral trends, or promote AI-generated content.",
+    body: "See posts in the order they were written. No algorithms manipulating your feed, pushing viral trends, or promoting slop.",
     href: "/privacy",
     cta: "Read our privacy details"
   },
   {
-    title: "Apps & games",
-    body: "Launch simulators and classic Flash games directly in your browser. Play your favorite games, give props, leave comments, and join dedicated gaming communities.",
+    title: "Flash arcade",
+    body: "Play thousands of classic Flash games directly in your browser. Give props, leave comments, share reviews, and join dedicated gaming communities.",
     href: "/arcade",
     cta: "Explore the arcade"
   },
@@ -55,13 +55,7 @@ export function AnnouncementBox({ settings }: { settings: SiteSettings }) {
 export function AdBanner() {
   return (
     <div style="text-align: center; overflow: hidden;">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9156391108980330"
-           data-ad-slot="7238067622"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>{raw(`(adsbygoogle = window.adsbygoogle || []).push({});`)}</script>
+      
     </div>
   );
 }
@@ -69,13 +63,7 @@ export function AdBanner() {
 export function AdBannerMain() {
   return (
     <div style="text-align: center; overflow: hidden;">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9156391108980330"
-           data-ad-slot="7381983334"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>{raw(`(adsbygoogle = window.adsbygoogle || []).push({});`)}</script>
+      
     </div>
   );
 }

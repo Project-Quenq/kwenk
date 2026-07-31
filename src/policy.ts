@@ -146,6 +146,7 @@ export const reservedHandles: ReadonlySet<string> = new Set([
   "admin",
   "administrator",
   "quenq",
+  "kwenk",
   "help",
   "moderator",
   "root",
@@ -153,8 +154,7 @@ export const reservedHandles: ReadonlySet<string> = new Set([
   "staff",
   "support",
   "system",
-  "arcade",
-  "apps"
+  "arcade"
 ]);
 
 const characterCountFormatter = new Intl.NumberFormat("en-US");

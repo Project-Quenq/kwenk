@@ -84,7 +84,7 @@ Mutating form routes can opt into named action rate limits through the shared fo
 
 ## Uploads
 
-Uploads are stored on disk under `QUENQ_UPLOAD_DIR`, which defaults to `data/uploads` in local development. Validation checks size, allowed extension/MIME, and file signature. Filenames are random UUIDs.
+Uploads are stored on disk under `KWENK_UPLOAD_DIR`, which defaults to `data/uploads` in local development. Validation checks size, allowed extension/MIME, and file signature. Filenames are random UUIDs.
 
 Profile images, post images, and theme songs live in separate upload buckets. Deletion paths that remove posts, groups, or accounts are responsible for removing referenced post-image files as well as the database rows.
 

@@ -35,7 +35,7 @@ export const defaultHeaderIconName = "brand";
 export const defaultHeaderIconSvg = brandIconSvg;
 
 export const siteIdentity: SiteIdentitySettings = {
-  name: "Quenq",
+  name: "Kwenk",
   tagline: "Make The Web Yours",
   headerIconName: defaultHeaderIconName,
   headerIconSvg: defaultHeaderIconSvg
@@ -43,15 +43,15 @@ export const siteIdentity: SiteIdentitySettings = {
 
 export const siteContact: SiteContactSettings = {
   email: "support@quenq.com",
-  companyName: "Quenq",
+  companyName: "Quenq LLC",
   mailingAddress: ""
 };
 
 export const defaultSiteSettings = {
   identity: siteIdentity,
   home: {
-    announcement: "Claim your unique handle, design your profile page with HTML/CSS, and join our quiet corner of the retro web, free from feed algorithms and AI slop.",
-    welcomeText: "Quenq is a creative, nostalgic social network and web museum. Customize your profile, play classic flash games, write blogs, and connect with friends."
+    announcement: "Claim your unique handle, design your profile page with HTML/CSS, and join an independent social network free from feed algorithms and AI slop.",
+    welcomeText: "Kwenk is a creative, nostalgic social network built for real human connection. Customize your profile, write blog posts, join groups, and connect with friends online."
   },
   contact: siteContact,
   registration: {

@@ -15,7 +15,6 @@ import { registerSearchRoutes } from "./search/index.js";
 import { registerSkinRoutes } from "./skins/index.js";
 import { registerSiteRoutes } from "./site/index.js";
 import { registerArcadeRoutes } from "./arcade/index.js";
-import { registerAppsRoutes } from "./apps/index.js";
 import type { AppBindings } from "../server/context.js";
 
 type RouteRegistrar = (app: Hono<AppBindings>) => void;
@@ -36,6 +35,5 @@ export const routeRegistrars: readonly RouteRegistrar[] = [
   registerAdminRoutes,
   registerModerationRoutes,
   registerSiteRoutes,
-  registerArcadeRoutes,
-  registerAppsRoutes
+  registerArcadeRoutes
 ];

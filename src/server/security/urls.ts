@@ -1,5 +1,5 @@
 const linkProtocols = new Set(["http:", "https:", "mailto:"]);
-const trustedLinkDomains = ["my.quenq.com", "quenq.com"] as const; 
+const trustedLinkDomains = ["quenq.com", "kwenk.com"] as const; 
 
 const trustedLinkDomainSet = new Set<string>(trustedLinkDomains);
 

@@ -20,10 +20,34 @@ type GamePageProps = {
 export function GamePlayPage(props: GamePageProps) {
   const game = props.game;
   const slug = game.url.split("/").pop() ?? "";
-  const cdnIframeSrc = `https://archive.quenq.com/arcade/data/${game.url}/`;
+  const cdnIframeSrc = `https://quenq.com/arcade/data/${game.url}/`;
+  const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
   const canonicalPath = `/arcade/${slug}`;
 
-  const metaDescription = game.description.replace(/\s+/g, " ").trim();
+  const cleanDescription = game.description.replace(/\s+/g, " ").trim();
+  const communitySeoDescription = `Discuss ${game.name} on Kwenk! Give props, read community comments, and play online free. ${cleanDescription}`;
+
+  const gameJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": game.name,
+    "description": cleanDescription,
+    "image": cdnThumbnail,
+    "gamePlatform": "Web Browser",
+    "applicationCategory": "Game",
+    "interactionStatistic": [
+      {
+        "@type": "InteractionCounter",
+        "interactionType": "https://schema.org/LikeAction",
+        "userInteractionCount": game.propsCount
+      },
+      {
+        "@type": "InteractionCounter",
+        "interactionType": "https://schema.org/CommentAction",
+        "userInteractionCount": game.commentCount
+      }
+    ]
+  };
 
   const engagementActions = (
     <>
@@ -51,13 +75,14 @@ export function GamePlayPage(props: GamePageProps) {
 
   return (
     <Layout
-      title={`Play ${game.name} Online | Free Flash Game | Quenq`}
+      title={`${game.name} - Game Discussion, Reviews & Play | Kwenk`}
       user={props.user}
       seo={{
         canonicalPath,
-        description: metaDescription,
-        type: "video.other",
-        imagePath: `https://archive.quenq.com/arcade/data/${game.thumbnail}`
+        description: communitySeoDescription,
+        type: "website",
+        imagePath: cdnThumbnail,
+        jsonLd: gameJsonLd
       }}
     >
       <PageFrame width="wide" title={`Play ${game.name} Online`}>
@@ -171,7 +196,7 @@ export function GamePlayPage(props: GamePageProps) {
                 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); width: 100%;">
                   {props.relatedGames.map((related) => {
                     const relatedSlug = related.url.split("/").pop() ?? "";
-                    const relatedThumbnail = `https://archive.quenq.com/arcade/data/${related.thumbnail}`;
+                    const relatedThumbnail = `https://quenq.com/arcade/data/${related.thumbnail}`;
                     return (
                       <article key={related.id} class="content-card" style="padding: 0; border-radius: var(--radius-panel); overflow: hidden;">
                         <a 

@@ -15,22 +15,21 @@ type ImportGame = {
 };
 
 export function runArcadeImport() {
-  // Read target path from command line arguments or environment variables
-  const targetPath = process.argv[2] || process.env.QUENQ_GAMES_JSON_PATH;
+  const targetPath = process.argv[2] || process.env.KWENK_GAMES_JSON_PATH;
 
   if (!targetPath) {
-    console.error("❌ Error: Missing path to games JSON catalog file.");
+    console.error("Error: Missing path to games JSON catalog file.");
     console.error("\nUsage via pnpm:");
     console.error("  pnpm db:import-arcade <path-to-games-db.json>");
     console.error("\nUsage via Env Variable:");
-    console.error("  Set QUENQ_GAMES_JSON_PATH=./data/games-db.json in your .env file");
+    console.error("  Set KWENK_GAMES_JSON_PATH=./data/games-db.json in your .env file");
     process.exit(1);
   }
 
   const resolvedPath = resolve(targetPath);
 
   if (!existsSync(resolvedPath)) {
-    console.error(`❌ Critical Error: Could not locate file at path: "${resolvedPath}"`);
+    console.error(`Critical Error: Could not locate file at path: "${resolvedPath}"`);
     process.exit(1);
   }
 
@@ -65,10 +64,9 @@ export function runArcadeImport() {
     transact();
     console.log(` Successfully imported/updated ${importedCount} games inside ${env.databasePath}.`);
   } catch (error) {
-    console.error("❌ Error while running the database migration script:", error);
+    console.error("Error while running the database migration script:", error);
     process.exit(1);
   }
 }
 
-// Execute immediately
 runArcadeImport();

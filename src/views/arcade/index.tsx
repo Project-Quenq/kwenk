@@ -24,14 +24,14 @@ export function ArcadeListPage(props: ArcadePageProps) {
     (g) => g.toLowerCase() === props.currentGenre.toLowerCase()
   );
   const formattedGenre = isProppedFilter 
-    ? "My Propped" 
+    ? "My Props" 
     : matchedGenre || (props.currentGenre ? props.currentGenre.charAt(0).toUpperCase() + props.currentGenre.slice(1) : "All");
 
   const isFilteredByGenre = props.currentGenre && props.currentGenre.toLowerCase() !== "all";
 
   const seoDescription = isFilteredByGenre
-    ? `Browse and play classic ${formattedGenre} Flash games instantly in your browser at the Quenq Arcade.`
-    : "Enter the Quenq Arcade, a massive, curated library of the best free emulated Flash games. Play nostalgic classics from a golden era of browser gaming, instantly.";
+    ? `Browse and play classic ${formattedGenre} Flash games on Kwenk Arcade. Read community reviews, give props, and play free online.`
+    : "Explore the Kwenk Arcade! Play thousands of free classic Flash games, leave reviews, give props, and join community discussions.";
 
   const pageTitle = isFilteredByGenre ? `${formattedGenre} Games` : "Arcade";
 
@@ -41,7 +41,7 @@ export function ArcadeListPage(props: ArcadePageProps) {
 
   return (
     <Layout
-      title={`${pageTitle} - Play Free Classic Flash Games | Quenq`}
+      title={`${pageTitle} - Community & Classic Flash Games | Kwenk`}
       user={props.user}
       seo={{
         canonicalPath,
@@ -51,7 +51,7 @@ export function ArcadeListPage(props: ArcadePageProps) {
     >
       <PageFrame width="wide" title={pageTitle}>
         
-        <p> Welcome to the ultimate destination for classic Flash gaming. Relive the golden era of browser games with a library of over <strong>1,300 legendary titles</strong>, carefully preserved and fully emulated to run seamlessly in modern web browsers. No plugins or downloads required. Whether you're revisiting old favorites or discovering timeless classics for the first time, every game is ready to play instantly in your browser. </p>
+        <p> Welcome to the Kwenk Arcade! Play thousands of classic Flash games directly in your browser. Give props to your favorites, leave comments, share reviews, and join dedicated gaming communities. No plugins or downloads required. </p>
 
         <SplitLayout variant="article">
           
@@ -110,7 +110,7 @@ export function ArcadeListPage(props: ArcadePageProps) {
               <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); width: 100%;">
                 {props.games.map((game) => {
                   const slug = game.url.split("/").pop() ?? "";
-                  const cdnThumbnail = `https://archive.quenq.com/arcade/data/${game.thumbnail}`;
+                  const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
                   return (
                     <article key={game.id} class="content-card" style="padding: 0; overflow: hidden;">
                       <a 

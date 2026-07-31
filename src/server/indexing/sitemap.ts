@@ -7,7 +7,6 @@ import {
 import { siteSettings } from "../db/siteSettings.js";
 import { staticContentPaths } from "./routes.js";
 import { absoluteUrl, xmlEscape } from "./urls.js";
-import { preservedAppsList } from "../../routes/apps/appShared.js";
 
 const sitemapUrlLimit = 50_000;
 type SitemapPath = { path: string; lastmod?: string | null };
@@ -27,17 +26,11 @@ function sitemapPaths() {
   const paths: SitemapPath[] = [];
   const seen = new Set<string>();
   addSitemapPaths(paths, seen, staticSitemapPaths());
-  addSitemapPaths(paths, seen, publicAppsIndexPaths());
   addSitemapPaths(paths, seen, publicArcadeIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicBlogCategoryIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicBlogIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicSkinIndexPaths(remainingSitemapSlots(paths)));
   return paths;
-}
-
-function publicAppsIndexPaths(): SitemapPath[] {
-  const lastmod = siteSettings().updatedAt;
-  return preservedAppsList.map((app) => ({ path: app.url, lastmod }));
 }
 
 function staticSitemapPaths(): SitemapPath[] {
