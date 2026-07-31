@@ -119,7 +119,7 @@ async function handleGameProp(
 ) {
   const user = requireAuth(c);
   await verifiedActionForm(c, "engagement.write");
-  const slug = c.req.param("slug");
+  const slug = c.req.param("slug") ?? "";
   const game = getGameBySlug(slug, user.id);
 
   if (!game) {

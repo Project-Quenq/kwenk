@@ -4,6 +4,7 @@ import { siteSettings } from "../../server/db/siteSettings.js";
 import { siteMarketingDescription, type PageSeo } from "../../settings/seo.js";
 import { plainPage } from "../../server/render.js";
 import type { AppBindings } from "../../server/context.js";
+import type { ViewChild } from "../../ui/types.js";
 import { raw } from "hono/html";
 
 type StaticPage = {

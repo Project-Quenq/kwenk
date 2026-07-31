@@ -192,7 +192,6 @@ function landingPage(c: AppContext, user: CurrentUser | null, message?: string, 
       user={user}
       csrf={csrfToken(c)}
       settings={siteSettings()}
-      admin={user ? null : getProfile(env.adminUserId) ?? null}
       newest={newestPreview.items}
       newestGroups={user ? listGroups(user, limits.newestCommunities) : featuredCommunityGroups()}
       spotlightGames={spotlightGames}
