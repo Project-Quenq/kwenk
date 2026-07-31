@@ -64,7 +64,7 @@ async function mediaFile(c: AppContext, root: string, filename: string) {
   const data = await readFile(join(root, filename)).catch(() => null);
   if (!data) throw new HTTPException(404, { message: "Media not found." });
 
-  c.header("Cache-Control", "private, no-store");
+  c.header("Cache-Control", "public, max-age=86400, s-maxage=2592000");
   c.header("Content-Type", mediaContentTypes.get(extname(filename).toLowerCase()) ?? "application/octet-stream");
   return c.body(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength));
 }

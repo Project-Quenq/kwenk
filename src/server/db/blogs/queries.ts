@@ -12,15 +12,15 @@ import {
   type PageOptions
 } from "../../pagination.js";
 
-const blogDiscoveryOrder = `ORDER BY (propsCount + commentCount) DESC, propsCount DESC, commentCount DESC, b.created_at DESC, b.id DESC`;
 const blogLatestOrder = "ORDER BY b.created_at DESC, b.id DESC";
 const userBlogLatestOrder = "ORDER BY b.pinned DESC, b.created_at DESC, b.id DESC";
+const blogPopularOrder = "ORDER BY propsCount DESC, commentCount DESC, b.created_at DESC, b.id DESC";
 
 export type BlogSortOrder = "latest" | "popular";
 
 export function blogsForUser(userId: number, viewer: CurrentUser | null, limit = limits.profileBlogPreview, order: BlogSortOrder = "latest") {
   const visibility = blogVisibilitySql(viewer);
-  const orderBy = order === "popular" ? blogDiscoveryOrder : userBlogLatestOrder;
+  const orderBy = order === "popular" ? blogPopularOrder : userBlogLatestOrder;
   return blogPreviewRows(
     `WHERE b.author_id = ? AND ${visibility.sql}
     ${orderBy} LIMIT ?`,
@@ -50,18 +50,19 @@ export function blogsForUserPage(
     params.push(pattern, pattern);
   }
 
-  const before = keysetBeforeCondition(decodeKeysetCursor(options.before), "b.created_at", "b.id");
-  const orderBy = order === "popular" ? blogDiscoveryOrder : userBlogLatestOrder;
+  const isPopular = order === "popular";
+  const before = isPopular ? { sql: "", params: [] } : keysetBeforeCondition(decodeKeysetCursor(options.before), "b.created_at", "b.id");
+  const orderBy = isPopular ? blogPopularOrder : userBlogLatestOrder;
 
   const rows = blogPreviewRows(
     `${filterSql} ${before.sql} ${orderBy} LIMIT ?`,
     viewer,
     ...params,
     ...before.params,
-    limit + 1
+    limit + (isPopular ? 0 : 1)
   );
 
-  return pageFromRows(rows, limit);
+  return isPopular ? { items: rows, nextCursor: null } : pageFromRows(rows, limit);
 }
 
 export function allBlogsForUser(userId: number, limit = limits.exportRows) {
@@ -93,18 +94,19 @@ export function allBlogs(
     params.push(pattern, pattern);
   }
 
-  const before = keysetBeforeCondition(decodeKeysetCursor(options.before), "b.created_at", "b.id");
-  const orderBy = order === "popular" ? blogDiscoveryOrder : blogLatestOrder;
+  const isPopular = order === "popular";
+  const before = isPopular ? { sql: "", params: [] } : keysetBeforeCondition(decodeKeysetCursor(options.before), "b.created_at", "b.id");
+  const orderBy = isPopular ? blogPopularOrder : blogLatestOrder;
 
   const rows = blogRows(
     `${filterSql} ${before.sql} ${orderBy} LIMIT ?`,
     viewer,
     ...params,
     ...before.params,
-    limit + 1
+    limit + (isPopular ? 0 : 1)
   );
 
-  return pageFromRows(rows, limit);
+  return isPopular ? { items: rows, nextCursor: null } : pageFromRows(rows, limit);
 }
 
 export function blogsByCategory(
