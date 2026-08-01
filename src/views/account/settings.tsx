@@ -135,6 +135,7 @@ function SettingsLinks() {
     <>
       <h4>More options</h4>
       <ul>
+        <li><a href="/blocks">Manage blocked users</a></li>
         <li><a href="/account/export.json">Export your account data</a></li>
         <li><a href="/account/delete">Delete account</a></li>
       </ul>

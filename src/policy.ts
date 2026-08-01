@@ -82,7 +82,7 @@ export const rateLimits = {
     "auth.signup": { limit: 5, windowSeconds: 60 * 60 },
     "auth.reset": { limit: 5, windowSeconds: 60 * 60 },
     "account.write": { limit: 30, windowSeconds: 10 * 60 },
-    "profile.write": { limit: 20, windowSeconds: 10 * 60 },
+    "profile.write": { limit: 60, windowSeconds: 10 * 60 },
     "post.create": { limit: 5, windowSeconds: 10 * 60 },
     "blog.create": { limit: 3, windowSeconds: 60 * 60 },
     "skin.create": { limit: 3, windowSeconds: 60 * 60 },

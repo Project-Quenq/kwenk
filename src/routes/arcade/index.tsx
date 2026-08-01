@@ -29,12 +29,14 @@ export function registerArcadeRoutes(app: Hono<AppBindings>) {
     const pageQuery = Number(c.req.query("page")) || 1;
     const genreQuery = c.req.query("genre") || "all";
     const searchQuery = c.req.query("search") || "";
+    const sortQuery = c.req.query("sort") || "popular";
 
     const { items, totalPages, currentPage } = getArcadePage(
       pageQuery,
       genreQuery,
       searchQuery,
-      user?.id ?? 0
+      user?.id ?? 0,
+      sortQuery
     );
 
     const hasPropped = user ? userHasProppedGames(user.id) : false;
@@ -49,6 +51,7 @@ export function registerArcadeRoutes(app: Hono<AppBindings>) {
         totalPages={totalPages}
         currentGenre={genreQuery}
         currentSearch={searchQuery}
+        currentSort={sortQuery}
         hasProppedGames={hasPropped}
       />
     );

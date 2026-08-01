@@ -86,36 +86,15 @@ export function clearGameGenresCache() {
   genresCache = null;
 }
 
-export function getWeeklySpotlightGames(limit = 12, viewerId = 0): GameItem[] {
-  const weekSeed = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
-  const countRow = sqlite.prepare("SELECT COUNT(*) AS count FROM arcade_games").get() as { count: number };
-  if (!countRow.count) return [];
-
-  const offset = (weekSeed * limit) % countRow.count;
-
-  const items = sqlite
+export function getPopularGames(limit = 12, viewerId = 0): GameItem[] {
+  return sqlite
     .prepare(
       `SELECT ${gameColumns(viewerId)}
       FROM arcade_games g
-      ORDER BY g.id ASC
-      LIMIT ? OFFSET ?`
+      ORDER BY propsCount DESC, commentCount DESC, g.name ASC
+      LIMIT ?`
     )
-    .all(limit, offset) as GameItem[];
-
-  if (items.length < limit) {
-    const remaining = limit - items.length;
-    const wrapItems = sqlite
-      .prepare(
-        `SELECT ${gameColumns(viewerId)}
-        FROM arcade_games g
-        ORDER BY g.id ASC
-        LIMIT ?`
-      )
-      .all(remaining) as GameItem[];
-    return [...items, ...wrapItems];
-  }
-
-  return items;
+    .all(limit) as GameItem[];
 }
 
 export function userHasProppedGames(userId: number): boolean {
@@ -127,7 +106,8 @@ export function getArcadePage(
   page: number,
   genre = "all",
   searchQuery = "",
-  viewerId = 0
+  viewerId = 0,
+  sort = "popular"
 ): PagedGamesResult {
   const limit = limits.gamesPerPage;
   const currentPage = Math.max(1, Math.floor(page));
@@ -162,6 +142,17 @@ export function getArcadePage(
   const totalCount = countRow.count;
   const totalPages = Math.ceil(totalCount / limit);
 
+  let orderSql = "";
+  if (sort === "alphabetical") {
+    orderSql = "g.name ASC";
+  } else if (sort === "popular") {
+    orderSql = "propsCount DESC, commentCount DESC, g.name ASC";
+  } else if (genre === "propped" || genre === "props") {
+    orderSql = "viewer_prop.created_at DESC";
+  } else {
+    orderSql = "propsCount DESC, commentCount DESC, g.name ASC";
+  }
+
   const queryParams = [...params, limit, offset];
   const items = sqlite
     .prepare(
@@ -169,7 +160,7 @@ export function getArcadePage(
       FROM arcade_games g
       ${joinSql}
       ${filterSql}
-      ORDER BY ${genre === "propped" || genre === "props" ? "viewer_prop.created_at DESC" : "g.name ASC"} LIMIT ? OFFSET ?`
+      ORDER BY ${orderSql} LIMIT ? OFFSET ?`
     )
     .all(...queryParams) as GameItem[];
 
