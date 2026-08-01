@@ -11,6 +11,7 @@ import { sqlite } from "../../server/db/client.js";
 import { ActionLabel } from "../../ui/actions.js";
 import { PaginationNav } from "../../ui/pagination.js";
 import { AdBanner, AdBannerMain } from "../home/infoPanels.js";
+import { Icon } from "../../ui/icons.js";
 
 type BlogListPageProps = {
   user: CurrentUser | null;
@@ -161,16 +162,18 @@ export function BlogListPage(props: BlogListPageProps) {
 export function BlogCardList(props: { blogs: BlogListItem[]; empty: string }) {
   return (
     <>
-      {props.blogs.length ? props.blogs.map((blog) => <BlogCard blog={blog} />) : <p><i>{props.empty}</i></p>}
+      {props.blogs.length ? props.blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />) : <p><i>{props.empty}</i></p>}
     </>
   );
 }
 
 function BlogCard(props: { blog: BlogListItem }) {
   const blog = props.blog;
+  const href = blogPath(blog);
+
   return (
     <div class="content-card">
-      <h3><a href={blogPath(blog)}>{blog.title}</a> <small class="blog-card__category">{blog.category ?? defaultBlogCategory}</small></h3>
+      <h3><a href={href}>{blog.title}</a> <small class="blog-card__category">{blog.category ?? defaultBlogCategory}</small></h3>
       {blog.username && blog.authorHandle ? (
         <p class="card-attribution">
           By <MetaSubjectLink href={profilePath(blog.authorHandle)}>{blog.username}</MetaSubjectLink>
@@ -179,6 +182,17 @@ function BlogCard(props: { blog: BlogListItem }) {
         </p>
       ) : null}
       <p>{truncateText(plainTextFromHtml(blog.bodyHtml), 180)}</p>
+
+      <div style="display: flex; align-items: center; gap: var(--space-5); color: var(--color-text-muted); border-top: var(--border-thin) solid var(--surface-rule); padding-top: var(--space-4);">
+        <span>
+          <Icon name="prop" /> {blog.propsCount} {blog.propsCount === 1 ? "prop" : "props"}
+        </span>
+        {blog.commentsEnabled ? (
+          <a href={`${href}#comments`} style="color: var(--color-text-muted); text-decoration: none;">
+            <Icon name="comment" /> {blog.commentCount} {blog.commentCount === 1 ? "comment" : "comments"}
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }

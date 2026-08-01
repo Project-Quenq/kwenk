@@ -12,6 +12,7 @@ import {
   updatePassword
 } from "../../server/db/users.js";
 import { getWeeklySpotlightGames } from "../../server/db/arcade.js";
+import { allBlogs } from "../../server/db/blogs/index.js";
 import { installBuiltinSkins } from "../../server/db/skins.js";
 import { consumeResetToken, consumeVerificationToken, requestPasswordReset, requestVerification } from "../../server/db/email.js";
 import { siteSettings } from "../../server/db/siteSettings.js";
@@ -185,7 +186,8 @@ function prefillEmail(value: string | undefined) {
 function landingPage(c: AppContext, user: CurrentUser | null, message?: string, status: 200 | 400 = 200) {
   const newestPreview = previewFromRows(newestUsers(user, limits.newestPeople + 1), limits.newestPeople);
   const newestGroupsPreview = previewFromRows(listGroups(user, limits.newestCommunities + 1), limits.newestCommunities);
-  const spotlightGames = getWeeklySpotlightGames(12, user?.id ?? 0);
+  const spotlightGames = getWeeklySpotlightGames(9, user?.id ?? 0);
+  const popularBlogs = allBlogs(null, { limit: 5 }, "popular").items;
 
   return c.html(
     <LandingPage
@@ -195,6 +197,7 @@ function landingPage(c: AppContext, user: CurrentUser | null, message?: string, 
       newest={newestPreview.items}
       newestGroups={user ? listGroups(user, limits.newestCommunities) : featuredCommunityGroups()}
       spotlightGames={spotlightGames}
+      popularBlogs={popularBlogs}
       message={message}
       passwordResetAvailable={smtpConfigured()}
     />,

@@ -1,6 +1,6 @@
-import type { GroupItem, PersonCard, GameItem } from "../../models.js";
+import type { GroupItem, PersonCard, GameItem, BlogListItem } from "../../models.js";
 import type { SiteSettings } from "../../settings/site.js";
-import { limits } from "../../policy.js";
+import { defaultBlogCategory, limits } from "../../policy.js";
 import type { CurrentUser } from "../../currentUser.js";
 import { CsrfInput, FormActions, FormError, FormField, FormStack } from "../../ui/forms.js";
 import { CommunityBox } from "../../ui/groups.js";
@@ -9,6 +9,10 @@ import { PeopleBox } from "../../ui/people.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
 import { coolNewPeople } from "./featuredPeople.js";
 import { AnnouncementBox, InfoCard, landingCards, AdBanner } from "./infoPanels.js";
+import { blogPath, profilePath } from "../../paths.js";
+import { MetaSubjectLink } from "../../ui/meta.js";
+import { plainTextFromHtml } from "../../server/security/html.js";
+import { truncateText } from "../../text.js";
 
 type LandingPageProps = {
   user: CurrentUser | null;
@@ -17,16 +21,10 @@ type LandingPageProps = {
   newest: PersonCard[];
   newestGroups: GroupItem[];
   spotlightGames: GameItem[];
+  popularBlogs: BlogListItem[];
   message?: string;
   passwordResetAvailable?: boolean;
 };
-
-const featuredSidebarApps = [
-  { name: "Reborn XP", url: "https://quenq.com/apps/reborn-xp", img: "https://quenq.com/apps/reborn-xp/og.jpg" },
-  { name: "Minecraft", url: "https://quenq.com/apps/minecraft", img: "https://quenq.com/apps/minecraft/og.jpg" },
-  { name: "VC Web", url: "https://quenq.com/apps/vc-web", img: "https://quenq.com/apps/vc-web/preview.jpg" },
-  { name: "3D Pinball", url: "https://quenq.com/apps/3d-pinball-space-cadet", img: "https://quenq.com/apps/3d-pinball-space-cadet/og.jpg" }
-];
 
 export function LandingPage(props: LandingPageProps) {
   const welcomeText = props.settings.home.welcomeText.trim();
@@ -106,27 +104,35 @@ export function LandingPage(props: LandingPageProps) {
             {props.passwordResetAvailable ? <a class="forgot" href="/reset">Forgot your password?</a> : null}
           </Panel>
 
-          <AdBanner />
-
-          <Panel title="Featured apps" tone="soft">
-            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); width: 100%;">
-              {featuredSidebarApps.map((app) => (
-                <article key={app.url} class="content-card" style="padding: 0; overflow: hidden;">
-                  <a 
-                    href={app.url}
-                    style={`display: block; width: 100%; aspect-ratio: 16 / 10; background-image: url('${app.img}'); background-size: cover; background-position: center; position: relative; text-decoration: none;`}
-                  >
-                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); padding: var(--space-1); text-align: center;">
-                      <p style="margin: 0; color: white; font-size: 10px; font-weight: bold; overflow-wrap: anywhere;">{app.name}</p>
-                    </div>
-                  </a>
-                </article>
-              ))}
-            </div>
+          <Panel title="Popular blogs" tone="soft">
+            {props.popularBlogs && props.popularBlogs.length ? (
+              <div style="display: grid; gap: var(--space-3); text-align: left;">
+                {props.popularBlogs.map((entry) => (
+                  <article key={entry.id} class="content-card" style="padding: var(--space-4); display: grid; gap: var(--space-2);">
+                    <h3>
+                      <a href={blogPath(entry)}>{entry.title}</a>
+                    </h3>
+                    {entry.username && entry.authorHandle ? (
+                      <p class="card-attribution">
+                        By <MetaSubjectLink href={profilePath(entry.authorHandle)}>{entry.username}</MetaSubjectLink>
+                        <small class="blog-card__category">{entry.category ?? defaultBlogCategory}</small>
+                      </p>
+                    ) : null}
+                    <p>
+                      {truncateText(plainTextFromHtml(entry.bodyHtml), 150)}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p><i>There are no blog entries yet.</i></p>
+            )}
             <div style="text-align: center; margin-top: var(--space-4);">
-              <a href="https://quenq.com/apps" class="button">&raquo; Explore All Apps</a>
+              <a href="/blog?sort=popular" class="button">&raquo; Browse Popular Blogs</a>
             </div>
           </Panel>
+
+          <AdBanner />
         </SplitPane>
 
       </SplitLayout>
