@@ -477,8 +477,56 @@ BEGIN
 END;
 `;
 
+function repairCorruptedBlogForeignKeys() {
+  const commentsSql = sqlite.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='blog_comments'").get() as { sql: string } | undefined;
+  const propsSql = sqlite.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='blog_props'").get() as { sql: string } | undefined;
+
+  const needsCommentsRepair = Boolean(commentsSql && commentsSql.sql.includes("blogs_old"));
+  const needsPropsRepair = Boolean(propsSql && propsSql.sql.includes("blogs_old"));
+
+  if (needsCommentsRepair || needsPropsRepair) {
+    sqlite.exec("PRAGMA foreign_keys = OFF;");
+    sqlite.transaction(() => {
+      if (needsCommentsRepair) {
+        sqlite.exec("ALTER TABLE blog_comments RENAME TO blog_comments_old;");
+        sqlite.exec(`
+          CREATE TABLE blog_comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            blog_id INTEGER NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+            author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            text_html TEXT NOT NULL,
+            parent_id INTEGER REFERENCES blog_comments(id) ON DELETE CASCADE,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE INDEX IF NOT EXISTS blog_comments_blog_idx ON blog_comments(blog_id);
+          CREATE INDEX IF NOT EXISTS blog_comments_blog_created_idx ON blog_comments(blog_id, created_at);
+          INSERT INTO blog_comments SELECT * FROM blog_comments_old;
+          DROP TABLE blog_comments_old;
+        `);
+      }
+
+      if (needsPropsRepair) {
+        sqlite.exec("ALTER TABLE blog_props RENAME TO blog_props_old;");
+        sqlite.exec(`
+          CREATE TABLE blog_props (
+            blog_id INTEGER NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (blog_id, user_id)
+          );
+          CREATE INDEX IF NOT EXISTS blog_props_user_idx ON blog_props(user_id, created_at);
+          INSERT INTO blog_props SELECT * FROM blog_props_old;
+          DROP TABLE blog_props_old;
+        `);
+      }
+    })();
+    sqlite.exec("PRAGMA foreign_keys = ON;");
+  }
+}
+
 export function initializeDatabase() {
   ensureRuntimeDirs();
+  repairCorruptedBlogForeignKeys();
   sqlite.exec(schemaSql);
   installDefaultAutomodRules();
   installBuiltinSkins();
