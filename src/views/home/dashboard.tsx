@@ -13,7 +13,7 @@ import { PreviewTitleLink } from "../../ui/previews.js";
 import { InlineLinks } from "../../ui/links.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
 import { PostList } from "../posts/index.js";
-import { AnnouncementBox } from "./infoPanels.js";
+import { AdBanner, AnnouncementBox } from "./infoPanels.js";
 
 export function HomePage(props: {
   user: CurrentUser;
@@ -71,6 +71,7 @@ export function HomePage(props: {
             <p>Profile views: <span class="count">{props.profile.views}</span></p>
           </Panel>
           <AnnouncementBox settings={props.settings} />
+          <AdBanner />
         </SplitPane>
         <SplitPane area="main">
           <Panel className="post-panel" title="Feed" headerAction={props.feedHref ? <a href={props.feedHref}>[view all]</a> : null} tone="soft">
