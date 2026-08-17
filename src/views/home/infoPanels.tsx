@@ -55,18 +55,7 @@ export function AnnouncementBox({ settings }: { settings: SiteSettings }) {
 export function AdBanner() {
   return (
     <div style="text-align: center; overflow: hidden;">
-      <script>{raw(`
-        (function(fevnw){
-        var d = document,
-            s = d.createElement('script'),
-            l = d.scripts[d.scripts.length - 1];
-        s.settings = fevnw || {};
-        s.src = "//shameful-farm.com/b.XUVmspdXGclc0/Y/WIcc/oeTm/9_u_ZPUnl/kEPHT/c/zhM/jhUO5sMTT/c/tRN/z/MHyoNpTxkHyvMzQS";
-        s.async = true;
-        s.referrerPolicy = 'no-referrer-when-downgrade';
-        l.parentNode.insertBefore(s, l);
-        })({})
-      `)}</script>
+      
     </div>
   );
 }
@@ -74,18 +63,7 @@ export function AdBanner() {
 export function AdBannerMain() {
   return (
     <div style="text-align: center; overflow: hidden;">
-      <script>{raw(`
-        (function(nigbw){
-        var d = document,
-            s = d.createElement('script'),
-            l = d.scripts[d.scripts.length - 1];
-        s.settings = nigbw || {};
-        s.src = "//shameful-farm.com/bgX-V.sOdOGLlL0yYoWkcl/feOmE9qu/ZFUBlbkwPwT/cfzoMjjjUi5NMQzwMctIN/zLMfyyNcTLk/zpNqwm";
-        s.async = true;
-        s.referrerPolicy = 'no-referrer-when-downgrade';
-        l.parentNode.insertBefore(s, l);
-        })({})
-      `)}</script>
+      
     </div>
   );
 }
