@@ -1,6 +1,7 @@
 import { isBlogCategory } from "../../policy.js";
 import {
   publicBlogCanonicalPath,
+  publicPostCanonicalPath,
   publicProfileCanonicalPathByHandle,
   publicSkinCanonicalPath
 } from "../db/indexing.js";
@@ -34,8 +35,6 @@ export function resolveIndexing(c: AppContext): IndexingDecision {
   if (c.get("currentUser")) return noindex("authenticated request");
 
   const url = new URL(c.req.url);
-  if (url.search) return noindex("query string");
-
   return resolveIndexingPath(normalizePath(url.pathname));
 }
 
@@ -74,6 +73,14 @@ function resolveIndexingPath(path: string): IndexingDecision {
     if (!["", "/comments"].includes(skin.suffix)) return noindex("non-canonical skin route");
     const canonicalPath = publicSkinCanonicalPath(skin.id);
     if (!canonicalPath) return noindex("non-public skin");
+    return index(canonicalPath);
+  }
+
+  const post = idRoute(path, "/p/");
+  if (post) {
+    if (post.suffix !== "") return noindex("non-canonical post route");
+    const canonicalPath = publicPostCanonicalPath(post.id);
+    if (!canonicalPath) return noindex("non-public post");
     return index(canonicalPath);
   }
 

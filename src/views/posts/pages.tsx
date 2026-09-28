@@ -1,8 +1,9 @@
 import type { CommentItem, PostItem } from "../../models.js";
 import type { CurrentUser } from "../../currentUser.js";
-import { BackToPage } from "../../ui/links.js";
+import { profilePath } from "../../paths.js";
+import { BackLink, BackToPage } from "../../ui/links.js";
 import { PaginationNav } from "../../ui/pagination.js";
-import { Layout, PageFrame } from "../../shell/index.js";
+import { Layout, PageFrame, type PageSeo } from "../../shell/index.js";
 import { AuthorSkinStyles } from "../../skins/rendering.js";
 import { PostCard, PostList } from "./cards.js";
 import { PostComments } from "./comments.js";
@@ -20,10 +21,26 @@ export function FeedPage(props: { user: CurrentUser; csrf: string; posts: PostIt
   );
 }
 
-export function PostPage(props: { user: CurrentUser; csrf: string; post: PostItem; comments: CommentItem[]; canInteract: boolean }) {
+export function PostPage(props: {
+  user: CurrentUser | null;
+  csrf: string;
+  post: PostItem;
+  comments: CommentItem[];
+  canInteract: boolean;
+  seo?: PageSeo;
+}) {
+  const back = props.user
+    ? <BackToPage page="feed" />
+    : <BackLink href={profilePath(props.post.authorHandle)} label={`${props.post.username}'s profile`} />;
+
   return (
-    <Layout title="Post" user={props.user} head={<AuthorSkinStyles items={[props.post, ...props.comments]} />}>
-      <PageFrame back={<BackToPage page="feed" />}>
+    <Layout
+      title={`${props.post.username}'s Post`}
+      user={props.user}
+      head={<AuthorSkinStyles items={[props.post, ...props.comments]} />}
+      seo={props.seo}
+    >
+      <PageFrame back={back}>
         <PostCard user={props.user} csrf={props.csrf} post={props.post} canInteract={props.canInteract} />
         <PostComments user={props.user} csrf={props.csrf} post={props.post} comments={props.comments} canInteract={props.canInteract} />
       </PageFrame>

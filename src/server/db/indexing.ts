@@ -1,5 +1,5 @@
 import { isBlogCategory, limits } from "../../policy.js";
-import { blogPath, profilePath, skinPath } from "../../paths.js";
+import { blogPath, postPath, profilePath, skinPath } from "../../paths.js";
 import { sqlite } from "./client.js";
 
 const sitemapLimit = 50_000;
@@ -31,6 +31,24 @@ export function publicBlogCanonicalPath(id: number) {
     )
     .get(id) as { id: number } | undefined;
   return row ? blogPath(row) : null;
+}
+
+export function publicPostCanonicalPath(id: number) {
+  const row = sqlite
+    .prepare(
+      `SELECT po.id
+      FROM posts po
+      JOIN users author ON author.id = po.author_id
+      JOIN users wall_owner ON wall_owner.id = po.wall_user_id
+      JOIN profiles p ON p.user_id = wall_owner.id
+      WHERE po.id = ?
+        AND po.wall_user_id IS NOT NULL
+        AND author.banned_at IS NULL
+        AND wall_owner.banned_at IS NULL
+        AND p.private = 0`
+    )
+    .get(id) as { id: number } | undefined;
+  return row ? postPath(row) : null;
 }
 
 export function publicSkinCanonicalPath(id: number) {
@@ -84,6 +102,24 @@ export function publicSkinIndexPaths(limit = sitemapLimit) {
     )
     .all(limit) as IdSitemapRow[];
   return rows.map((row) => ({ path: skinPath(row), lastmod: row.lastmod }));
+}
+
+export function publicPostIndexPaths(limit = sitemapLimit) {
+  const rows = sqlite
+    .prepare(
+      `SELECT po.id, po.updated_at AS lastmod
+      FROM posts po
+      JOIN users author ON author.id = po.author_id
+      JOIN users wall_owner ON wall_owner.id = po.wall_user_id
+      JOIN profiles p ON p.user_id = wall_owner.id
+      WHERE po.wall_user_id IS NOT NULL
+        AND author.banned_at IS NULL
+        AND wall_owner.banned_at IS NULL
+        AND p.private = 0
+      ORDER BY po.created_at DESC, po.id DESC LIMIT ?`
+    )
+    .all(limit) as IdSitemapRow[];
+  return rows.map((row) => ({ path: postPath(row), lastmod: row.lastmod }));
 }
 
 export function publicBlogCategoryIndexPaths(limit = limits.listPage) {

@@ -2,7 +2,7 @@ import type { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { anchors } from "../../anchors.js";
 import { requireAuth, visibleGroup, visibleProfile } from "../../server/access.js";
-import { csrfToken } from "../../server/auth/session.js";
+import { csrfToken, currentUser } from "../../server/auth/session.js";
 import { scanAutomodSubmission } from "../../server/db/automod.js";
 import { profileByHandle } from "../../server/db/users.js";
 import {
@@ -33,7 +33,7 @@ import { limits } from "../../policy.js";
 import type { CurrentUser } from "../../currentUser.js";
 import type { AppBindings, AppContext } from "../../server/context.js";
 import type { UserProfile } from "../../models.js";
-import { FeedPage, PostPage } from "../../views/posts/index.js";
+import { FeedPage, PostPage, postSeo } from "../../views/posts/index.js";
 import { groupPath, postPath, profilePath } from "../../paths.js";
 
 export function registerPostRoutes(app: Hono<AppBindings>) {
@@ -105,7 +105,7 @@ export function registerPostRoutes(app: Hono<AppBindings>) {
   });
 
   app.get("/p/:id", (c) => {
-    const user = requireAuth(c);
+    const user = currentUser(c) ?? null;
     const post = visiblePost(c, user);
     return c.html(
       <PostPage
@@ -113,7 +113,8 @@ export function registerPostRoutes(app: Hono<AppBindings>) {
         csrf={csrfToken(c)}
         post={post}
         comments={postCommentsFor(post.id, user)}
-        canInteract={canInteractWithPost(post, user.id)}
+        canInteract={user ? canInteractWithPost(post, user.id) : false}
+        seo={postSeo(post)}
       />
     );
   });
@@ -146,7 +147,7 @@ async function propAction(
   return c.redirect(localBack(c, postPath(post), { fragment: anchors.post(post) }));
 }
 
-function visiblePost(c: AppContext, user: CurrentUser) {
+function visiblePost(c: AppContext, user: CurrentUser | null) {
   const post = getVisiblePost(routeId(c), user);
   if (!post) throw new HTTPException(404, { message: "Post not found." });
   return post;

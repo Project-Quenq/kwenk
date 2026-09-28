@@ -5,19 +5,27 @@ import { CommentForm, CommentList } from "../../ui/comments.js";
 import { Panel } from "../../ui/panels.js";
 import { postCommentsPath } from "../../paths.js";
 
-export function PostComments(props: { user: CurrentUser; csrf: string; post: PostItem; comments: CommentItem[]; canInteract: boolean }) {
+export function PostComments(props: { user: CurrentUser | null; csrf: string; post: PostItem; comments: CommentItem[]; canInteract: boolean }) {
+  const commentActionPrompt = props.user ? (
+    props.canInteract ? (
+      <CommentForm action={postCommentsPath(props.post)} csrf={props.csrf} />
+    ) : (
+      <p><i>{props.post.groupId ? "Join the group to comment." : "You cannot comment on this post."}</i></p>
+    )
+  ) : (
+    <p><i><a href="/login">Log in</a> or <a href="/signup">sign up</a> to leave a comment.</i></p>
+  );
+
   return (
     <Panel className="post-comments comments-panel" id={anchors.comments} title="Comments" tone="soft">
-      {props.canInteract ? (
-        <CommentForm action={postCommentsPath(props.post)} csrf={props.csrf} />
-      ) : <p><i>Join the group to comment.</i></p>}
+      {commentActionPrompt}
       <CommentList
         comments={props.comments}
         user={props.user}
         csrf={props.csrf}
         deleteOwnerIds={postCommentDeleteOwnerIds(props.post)}
         deleteAction="/p/comments"
-        replyAction={props.canInteract ? postCommentsPath(props.post) : undefined}
+        replyAction={props.user && props.canInteract ? postCommentsPath(props.post) : undefined}
         reportType="post_comment"
       />
     </Panel>

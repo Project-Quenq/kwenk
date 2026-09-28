@@ -1,7 +1,9 @@
 import {
+  publicArcadeIndexPaths,
   publicBlogCategoryIndexPaths,
   publicBlogIndexPaths,
-  publicArcadeIndexPaths,
+  publicPostIndexPaths,
+  publicProfileIndexPaths,
   publicSkinIndexPaths
 } from "../db/indexing.js";
 import { siteSettings } from "../db/siteSettings.js";
@@ -30,6 +32,8 @@ function sitemapPaths() {
   addSitemapPaths(paths, seen, publicBlogCategoryIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicBlogIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicSkinIndexPaths(remainingSitemapSlots(paths)));
+  addSitemapPaths(paths, seen, publicProfileIndexPaths(remainingSitemapSlots(paths)));
+  addSitemapPaths(paths, seen, publicPostIndexPaths(remainingSitemapSlots(paths)));
   return paths;
 }
 
