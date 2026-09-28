@@ -8,7 +8,6 @@ const privateRobotPaths = [
   "/account",
   messagesPath,
   notificationsPath,
-  "/feed",
   "/friends",
   "/requests",
   "/blocks",

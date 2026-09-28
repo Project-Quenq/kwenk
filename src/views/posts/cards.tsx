@@ -69,13 +69,15 @@ export function PostCard(props: {
   );
   const utilityActions = (
     <>
-      <a
-        href={href}
-        title="Copy link to post"
-        onclick="event.preventDefault(); navigator.clipboard.writeText(new URL(this.getAttribute('href'), window.location.origin).href).then(() => { const s = this.querySelector('span'); if (!s) return; const old = s.innerText; s.innerText = 'Copied!'; setTimeout(() => { s.innerText = old; }, 2000); }).catch(() => {});"
+      <button
+        type="button"
+        class="button--link"
+        data-share-url={href}
+        data-share-title={`${post.username} on Kwenk`}
+        title="Share this post"
       >
         <ActionLabel action="share">Share</ActionLabel>
-      </a>
+      </button>
       {!isOwnPost ? (
         <a href={reportPath("post", post)}><ActionLabel action="report">Report</ActionLabel></a>
       ) : null}

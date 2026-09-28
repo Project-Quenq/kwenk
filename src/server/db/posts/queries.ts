@@ -1,4 +1,4 @@
-import type { PageOptions } from "../../pagination.js";
+import { decodeKeysetCursor, keysetBeforeCondition, normalizePageLimit, pageFromRows, type PageOptions } from "../../pagination.js";
 import { friendshipStatus, limits } from "../../../policy.js";
 import type { CurrentUser } from "../../../currentUser.js";
 import { authorVisibleSql, groupOwnerVisibleSql, postRows, viewerId } from "./sql.js";
@@ -33,13 +33,59 @@ export function getVisiblePost(id: number, viewer: CurrentUser | null) {
 export function recentPublicPosts(limit = 6) {
   const visible = visiblePostAccessSql(null);
   const author = authorVisibleSql(null);
-  return postRows(
-    `WHERE ${visible.sql} AND ${author.sql} ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
+
+  // Prioritize latest posts that have engagement (at least 1 prop or comment)
+  const engagedRows = postRows(
+    `WHERE ${visible.sql} AND ${author.sql}
+      AND (
+        EXISTS (SELECT 1 FROM post_props pp WHERE pp.post_id = po.id)
+        OR EXISTS (SELECT 1 FROM post_comments pc WHERE pc.post_id = po.id)
+      )
+    ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
     null,
     ...visible.params,
     ...author.params,
     limit
   );
+
+  if (engagedRows.length >= limit) {
+    return engagedRows;
+  }
+
+  // Backfill with other recent public posts if there are fewer engaged posts
+  const excludeIds = engagedRows.map((r) => r.id);
+  const needed = limit - engagedRows.length;
+  const excludeClause = excludeIds.length
+    ? `AND po.id NOT IN (${excludeIds.map(() => "?").join(",")})`
+    : "";
+
+  const backfillRows = postRows(
+    `WHERE ${visible.sql} AND ${author.sql} ${excludeClause}
+    ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
+    null,
+    ...visible.params,
+    ...author.params,
+    ...excludeIds,
+    needed
+  );
+
+  return [...engagedRows, ...backfillRows];
+}
+
+export function publicFeedPage(options: PageOptions = {}) {
+  const limit = normalizePageLimit(options.limit, limits.feedPosts, limits.listPage);
+  const visible = visiblePostAccessSql(null);
+  const author = authorVisibleSql(null);
+  const before = keysetBeforeCondition(decodeKeysetCursor(options.before), "po.created_at", "po.id");
+  const rows = postRows(
+    `WHERE ${visible.sql} AND ${author.sql} ${before.sql} ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
+    null,
+    ...visible.params,
+    ...author.params,
+    ...before.params,
+    limit + 1
+  );
+  return pageFromRows(rows, limit);
 }
 
 export function postsForProfilePage(profileId: number, viewer: CurrentUser | null, options: PageOptions = {}) {

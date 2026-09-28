@@ -9,11 +9,24 @@ import { PostCard, PostList } from "./cards.js";
 import { PostComments } from "./comments.js";
 import { PostComposer } from "./composer.js";
 
-export function FeedPage(props: { user: CurrentUser; csrf: string; posts: PostItem[]; nextHref?: string | null; resetHref?: string | null }) {
+export function FeedPage(props: {
+  user: CurrentUser | null;
+  csrf: string;
+  posts: PostItem[];
+  nextHref?: string | null;
+  resetHref?: string | null;
+  seo?: PageSeo;
+}) {
   return (
-    <Layout title="Feed" user={props.user} head={<AuthorSkinStyles items={props.posts} />}>
+    <Layout title="Feed" user={props.user} head={<AuthorSkinStyles items={props.posts} />} seo={props.seo}>
       <PageFrame title="Feed">
-        <PostComposer action="/feed" csrf={props.csrf} button="Post" />
+        {props.user ? (
+          <PostComposer action="/feed" csrf={props.csrf} button="Post" />
+        ) : (
+          <p class="card-attribution" style="margin-bottom: var(--space-4);">
+            <i><a href="/login">Log in</a> or <a href="/signup">sign up</a> to share updates, join discussions, and prop posts.</i>
+          </p>
+        )}
         <PostList user={props.user} csrf={props.csrf} posts={props.posts} empty="No posts yet." />
         <PaginationNav nextHref={props.nextHref} nextLabel="Older posts" resetHref={props.resetHref} resetLabel="Newest posts" />
       </PageFrame>

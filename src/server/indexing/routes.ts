@@ -27,7 +27,8 @@ export const staticContentPaths = [
   "/blog",
   "/skins",
   "/arcade",
-  "/groups"
+  "/groups",
+  "/feed"
 ] as const;
 
 const staticContentPathSet = new Set<string>(staticContentPaths);

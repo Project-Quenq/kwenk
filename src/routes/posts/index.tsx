@@ -19,6 +19,7 @@ import {
   getPost,
   getVisiblePost,
   postCommentsFor,
+  publicFeedPage,
   removePostProp
 } from "../../server/db/posts/index.js";
 import { audit, moderationSubjectAuditMetadata } from "../../server/db/moderation/index.js";
@@ -38,16 +39,22 @@ import { groupPath, postPath, profilePath } from "../../paths.js";
 
 export function registerPostRoutes(app: Hono<AppBindings>) {
   app.get("/feed", (c) => {
-    const user = requireAuth(c);
+    const user = currentUser(c) ?? null;
     const before = c.req.query(beforeParam);
-    const page = feedPageForUser(user, { before, limit: limits.feedPosts });
+    const page = user
+      ? feedPageForUser(user, { before, limit: limits.feedPosts })
+      : publicFeedPage({ before, limit: limits.feedPosts });
     return c.html(
       <FeedPage
         user={user}
-        csrf={csrfToken(c)}
+        csrf={user ? csrfToken(c) : ""}
         posts={page.items}
         nextHref={page.nextCursor ? paginationHref("/feed", page.nextCursor) : null}
         resetHref={before ? "/feed" : null}
+        seo={{
+          canonicalPath: "/feed",
+          description: "Browse the latest posts, updates, and discussions from the Kwenk community."
+        }}
       />
     );
   });

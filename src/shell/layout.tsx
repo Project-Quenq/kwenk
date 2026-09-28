@@ -88,6 +88,65 @@ export function Layout(props: {
               </main>
               <Footer contact={settings.contact} dataAttributes={skinPart("footer")} />
             </div>
+            {/* Native share & clipboard handler */}
+            <script>{raw(`
+              document.addEventListener('click', function(e) {
+                var btn = e.target.closest('[data-share-url]');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                var path = btn.getAttribute('data-share-url');
+                var url = new URL(path, window.location.origin).href;
+                var title = btn.getAttribute('data-share-title') || 'Kwenk';
+                var label = btn.querySelector('span');
+
+                function flashCopied() {
+                  if (!label) return;
+                  var original = label.textContent;
+                  label.textContent = 'Copied!';
+                  setTimeout(function() {
+                    label.textContent = original;
+                  }, 2000);
+                }
+
+                function copyToClipboard() {
+                  if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(flashCopied).catch(fallbackCopy);
+                  } else {
+                    fallbackCopy();
+                  }
+                }
+
+                function fallbackCopy() {
+                  var textarea = document.createElement('textarea');
+                  textarea.value = url;
+                  textarea.style.position = 'fixed';
+                  textarea.style.opacity = '0';
+                  document.body.appendChild(textarea);
+                  textarea.select();
+                  try {
+                    document.execCommand('copy');
+                    flashCopied();
+                  } catch (err) {}
+                  document.body.removeChild(textarea);
+                }
+
+                if (navigator.share) {
+                  navigator.share({
+                    title: title,
+                    url: url
+                  }).catch(function(err) {
+                    if (err && err.name === 'AbortError') {
+                      return;
+                    }
+                    copyToClipboard();
+                  });
+                } else {
+                  copyToClipboard();
+                }
+              });
+            `)}</script>
           </body>
         </html>
       </TimeZoneProvider>

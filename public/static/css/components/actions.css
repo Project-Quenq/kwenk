@@ -55,6 +55,30 @@
   padding: var(--space-2) var(--space-3);
 }
 
+.action-bar__secondary button.button--link {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: inherit;
+  font-size: var(--font-size-utility-action);
+  padding: 0;
+  min-height: auto;
+  line-height: inherit;
+  transform: none;
+}
+
+.action-bar__secondary button.button--link:hover,
+.action-bar__secondary button.button--link:active {
+  background: none;
+  box-shadow: none;
+  color: var(--color-link-hover);
+}
+
 .prop-count {
   cursor: default;
 }
