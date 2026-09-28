@@ -38,7 +38,7 @@ export function WallBox(props: {
 }
 
 export function GroupPostBox(props: {
-  user: CurrentUser;
+  user: CurrentUser | null;
   csrf: string;
   group: GroupItem;
   posts: PostItem[];

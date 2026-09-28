@@ -2,6 +2,7 @@ import {
   publicArcadeIndexPaths,
   publicBlogCategoryIndexPaths,
   publicBlogIndexPaths,
+  publicGroupIndexPaths,
   publicPostIndexPaths,
   publicProfileIndexPaths,
   publicSkinIndexPaths
@@ -34,6 +35,7 @@ function sitemapPaths() {
   addSitemapPaths(paths, seen, publicSkinIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicProfileIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicPostIndexPaths(remainingSitemapSlots(paths)));
+  addSitemapPaths(paths, seen, publicGroupIndexPaths(remainingSitemapSlots(paths)));
   return paths;
 }
 

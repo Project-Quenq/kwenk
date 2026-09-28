@@ -27,8 +27,29 @@ import { defaultBlogCategory, isBlogCategory, limits } from "../../policy.js";
 import type { AppBindings, AppContext } from "../../server/context.js";
 import { BlogEntryPage, BlogListPage, EditBlogPage, NewBlogPage } from "../../views/blogs/index.js";
 import { blogCommentsPath, blogPath, profileBlogPath } from "../../paths.js";
+import { generateRssFeed } from "../../server/feeds/rss.js";
+import { absoluteUrl } from "../../server/indexing/urls.js";
 
 export function registerBlogRoutes(app: Hono<AppBindings>) {
+  const blogRssHandler = (c: AppContext) => {
+    const page = allBlogs(null, { limit: 30 }, "latest");
+    const feed = generateRssFeed(
+      {
+        title: "Kwenk Blogs",
+        link: absoluteUrl("/blog"),
+        description: "Latest public blog entries from the Kwenk community",
+        feedUrl: absoluteUrl("/blog/feed.xml")
+      },
+      page.items
+    );
+    c.header("Content-Type", "application/xml; charset=utf-8");
+    c.header("Cache-Control", "public, max-age=600");
+    return c.body(feed);
+  };
+
+  app.get("/blog/feed.xml", blogRssHandler);
+  app.get("/blog/rss.xml", blogRssHandler);
+
   app.get("/blog", (c) => {
     const user = currentUser(c);
     const before = c.req.query(beforeParam);

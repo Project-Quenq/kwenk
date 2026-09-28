@@ -1,6 +1,6 @@
 import type { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { csrfToken } from "../../server/auth/session.js";
+import { csrfToken, currentUser } from "../../server/auth/session.js";
 import { scanAutomodSubmission } from "../../server/db/automod.js";
 import { requireAuth, requireGroup, requireOwnerOrAdmin, visibleGroup } from "../../server/access.js";
 import {
@@ -26,7 +26,7 @@ import { GroupFormPage, GroupListPage, GroupPage } from "../../views/groups/inde
 
 export function registerGroupRoutes(app: Hono<AppBindings>) {
   app.get("/groups", (c) => {
-    const user = requireAuth(c);
+    const user = currentUser(c) ?? null;
     return c.html(<GroupListPage user={user} groups={listGroups(user)} />);
   });
   app.get("/groups/new", (c) => c.html(<GroupFormPage user={requireAuth(c)} csrf={csrfToken(c)} />));
@@ -86,7 +86,7 @@ export function registerGroupRoutes(app: Hono<AppBindings>) {
 
 function groupPage(c: AppContext, fullPosts = false) {
   const { user, group } = visibleGroup(c, routeId(c));
-  const member = isGroupMember(group.id, user.id);
+  const member = Boolean(user && isGroupMember(group.id, user.id));
   const before = c.req.query(beforeParam);
   const postsBaseHref = `${groupPath(group)}/posts`;
   const postsPage = fullPosts ? postsForGroupPage(group.id, user, { before, limit: limits.listPage }) : null;
@@ -108,16 +108,17 @@ function groupPage(c: AppContext, fullPosts = false) {
 }
 
 async function joinGroupAction(c: AppContext) {
-  requireAuth(c);
+  const user = requireAuth(c);
   await verifiedActionForm(c, "relationship.write");
-  const { user, group } = visibleGroup(c, routeId(c));
+  const { group } = visibleGroup(c, routeId(c));
   joinGroup(group.id, user.id);
   return c.redirect(localBack(c, groupPath(group)));
 }
 
 async function leaveGroupAction(c: AppContext) {
-  const { user, group } = visibleGroup(c, routeId(c));
+  const user = requireAuth(c);
   await verifiedActionForm(c, "relationship.write");
+  const { group } = visibleGroup(c, routeId(c));
   leaveGroup(group.id, user.id);
   return c.redirect(localBack(c, groupPath(group)));
 }

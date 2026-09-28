@@ -4,7 +4,9 @@ import { requireAuth, requireProfile, visibleProfile } from "../../server/access
 import { csrfToken } from "../../server/auth/session.js";
 import { blogsForUserPage } from "../../server/db/blogs/index.js";
 import { brandingSettings } from "../../server/db/branding.js";
+import { generateRssFeed } from "../../server/feeds/rss.js";
 import { listGroups } from "../../server/db/groups.js";
+import { absoluteUrl } from "../../server/indexing/urls.js";
 import { feedPageForUser } from "../../server/db/posts/index.js";
 import { friendCountFor, hasBlocked, pendingRequestsFor, visibleFriendsFor } from "../../server/db/relationships.js";
 import { siteSettings } from "../../server/db/siteSettings.js";
@@ -134,9 +136,33 @@ export function registerProfileRoutes(app: Hono<AppBindings>) {
     );
   });
 
+  app.get("/u/:handle/feed.xml", (c) => userBlogFeed(c));
+  app.get("/u/:handle/rss.xml", (c) => userBlogFeed(c));
   app.get("/u/:handle/wall", (c) => profilePage(c, profileForHandle(c).id, true));
 
   app.get("/u/:handle", (c) => profilePage(c, profileForHandle(c).id));
+}
+
+function userBlogFeed(c: AppContext) {
+  const profile = profileForHandle(c);
+  if (profile.private) {
+    throw new HTTPException(404, { message: "Feed not found." });
+  }
+  const page = blogsForUserPage(profile.id, null, { limit: 25 }, "latest");
+  const channel = {
+    title: `${profile.username}'s Blog - Kwenk`,
+    description: `Latest public blog posts by ${profile.username} on Kwenk.`,
+    link: absoluteUrl(profileBlogPath(profile)),
+    feedUrl: absoluteUrl(`/u/${profile.handle}/feed.xml`)
+  };
+  const items = page.items.map((blog) => ({
+    ...blog,
+    username: profile.username,
+    authorHandle: profile.handle
+  }));
+  return c.text(generateRssFeed(channel, items), 200, {
+    "Content-Type": "application/rss+xml; charset=utf-8"
+  });
 }
 
 function profilePage(c: AppContext, id: number, fullWall = false) {

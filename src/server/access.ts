@@ -80,7 +80,7 @@ export function requireGroup(id: number) {
 
 export function visibleGroup(c: AppContext, id: number) {
   const group = requireGroup(id);
-  const user = requireAuth(c);
+  const user = currentUser(c) ?? null;
   visibleProfile(c, group.ownerId);
   if (!canViewGroup(user, group.id)) throw new HTTPException(404, { message: "Group not found." });
   return { group, user };

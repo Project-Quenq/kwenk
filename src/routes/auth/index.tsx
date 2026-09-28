@@ -13,6 +13,7 @@ import {
 } from "../../server/db/users.js";
 import { getPopularGames } from "../../server/db/arcade.js";
 import { allBlogs } from "../../server/db/blogs/index.js";
+import { recentPublicPosts } from "../../server/db/posts/index.js";
 import { installBuiltinSkins } from "../../server/db/skins.js";
 import { consumeResetToken, consumeVerificationToken, requestPasswordReset, requestVerification } from "../../server/db/email.js";
 import { siteSettings } from "../../server/db/siteSettings.js";
@@ -188,6 +189,7 @@ function landingPage(c: AppContext, user: CurrentUser | null, message?: string, 
   const newestGroupsPreview = previewFromRows(listGroups(user, limits.newestCommunities + 1), limits.newestCommunities);
   const spotlightGames = getPopularGames(12, user?.id ?? 0);
   const popularBlogs = allBlogs(null, { limit: 5 }, "popular").items;
+  const recentPosts = recentPublicPosts(5);
 
   return c.html(
     <LandingPage
@@ -198,6 +200,7 @@ function landingPage(c: AppContext, user: CurrentUser | null, message?: string, 
       newestGroups={user ? listGroups(user, limits.newestCommunities) : featuredCommunityGroups()}
       spotlightGames={spotlightGames}
       popularBlogs={popularBlogs}
+      recentPosts={recentPosts}
       message={message}
       passwordResetAvailable={smtpConfigured()}
     />,

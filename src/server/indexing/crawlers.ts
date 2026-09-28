@@ -28,8 +28,8 @@ const privateRobotPaths = [
   "/account/status",
   "/blog/new",
   "/b/*/edit",
-  "/g",
-  "/groups",
+  "/groups/new",
+  "/g/*/edit",
   "/skins/new",
   "/s/*/edit",
   "/s/*/preview"

@@ -1,4 +1,4 @@
-import type { GroupItem, PersonCard, GameItem, BlogListItem } from "../../models.js";
+import type { GroupItem, PersonCard, GameItem, BlogListItem, PostItem } from "../../models.js";
 import type { SiteSettings } from "../../settings/site.js";
 import { defaultBlogCategory, limits } from "../../policy.js";
 import type { CurrentUser } from "../../currentUser.js";
@@ -9,7 +9,7 @@ import { PeopleBox } from "../../ui/people.js";
 import { Layout, SplitLayout, SplitPane } from "../../shell/index.js";
 import { coolNewPeople } from "./featuredPeople.js";
 import { AnnouncementBox, InfoCard, landingCards, AdBanner } from "./infoPanels.js";
-import { blogPath, profilePath } from "../../paths.js";
+import { blogPath, postPath, profilePath } from "../../paths.js";
 import { MetaSubjectLink } from "../../ui/meta.js";
 import { plainTextFromHtml } from "../../server/security/html.js";
 import { truncateText } from "../../text.js";
@@ -22,6 +22,7 @@ type LandingPageProps = {
   newestGroups: GroupItem[];
   spotlightGames: GameItem[];
   popularBlogs: BlogListItem[];
+  recentPosts?: PostItem[];
   message?: string;
   passwordResetAvailable?: boolean;
 };
@@ -43,12 +44,51 @@ export function LandingPage(props: LandingPageProps) {
           
           <CommunityBox 
             title="Cool new communities" 
-            groups={props.user ? props.newestGroups : coolNewCommunities(props.newestGroups)} 
+            groups={props.newestGroups} 
             more="/groups" 
             singleLine 
           />
           
           <AnnouncementBox settings={props.settings} />
+
+          {props.recentPosts && props.recentPosts.length ? (
+            <Panel title="Recent community buzz" tone="soft">
+              <div style="display: grid; gap: var(--space-3);">
+                {props.recentPosts.map((post) => {
+                  const snippet = truncateText(plainTextFromHtml(post.bodyHtml), 120);
+                  return (
+                    <article key={post.id} class="content-card" style="padding: var(--space-3); display: flex; gap: var(--space-3); align-items: flex-start;">
+                      <a href={profilePath(post.authorHandle)}>
+                        <img
+                          src={post.pfp ? `/media/pfp/${post.pfp}` : "/static/img/default-pfp.png"}
+                          alt={`${post.username}'s avatar`}
+                          style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border-soft);"
+                        />
+                      </a>
+                      <div style="flex: 1; min-width: 0;">
+                        <p style="margin: 0; font-size: 13px;">
+                          <strong><a href={profilePath(post.authorHandle)}>{post.username}</a></strong>
+                          {post.wallUserHandle && post.wallUserId !== post.authorId ? (
+                            <span> &raquo; <a href={profilePath(post.wallUserHandle)}>{post.wallUsername}</a>'s wall</span>
+                          ) : post.groupName && post.groupId ? (
+                            <span> in <a href={`/g/${post.groupId}`}>{post.groupName}</a></span>
+                          ) : null}
+                        </p>
+                        <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-color); overflow-wrap: anywhere;">
+                          <a href={postPath(post)} style="text-decoration: none; color: inherit;">
+                            {snippet || <em>[Shared an image]</em>}
+                          </a>
+                        </p>
+                        <small style="color: var(--text-muted); font-size: 11px;">
+                          <a href={postPath(post)}>{post.commentCount} {post.commentCount === 1 ? "comment" : "comments"} · {post.propCount} props</a>
+                        </small>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </Panel>
+          ) : null}
 
           <Panel title="Flash arcade spotlights" tone="soft">
             {props.spotlightGames && props.spotlightGames.length ? (
@@ -142,8 +182,4 @@ export function LandingPage(props: LandingPageProps) {
       </div>
     </Layout>
   );
-}
-
-function coolNewCommunities(groups: GroupItem[]) {
-  return groups.slice(0, limits.newestCommunities).map((group) => ({ ...group, href: null }));
 }

@@ -13,13 +13,43 @@ import { CharacterLimitHint, CsrfInput, FormActions, FormError, FormField, FormS
 import { MetaSubjectLink } from "../../ui/meta.js";
 import { PeopleBox } from "../../ui/people.js";
 import { groupPath, profilePath } from "../../paths.js";
-import { Layout, PageFrame } from "../../shell/index.js";
+import { Layout, PageFrame, type PageSeo } from "../../shell/index.js";
+import { plainTextFromHtml } from "../../server/security/html.js";
+import { absoluteUrl } from "../../server/indexing/urls.js";
+import { seoText } from "../../settings/seo.js";
 
-export function GroupListPage(props: { user: CurrentUser; groups: GroupItem[] }) {
+export function groupSeo(group: GroupItem): PageSeo {
+  const path = groupPath(group);
+  const textContent = plainTextFromHtml(group.descriptionHtml);
+  const snippet = seoText(textContent, 180) || `Join ${group.name} on Kwenk`;
+  const authorUrl = absoluteUrl(profilePath(group.ownerHandle));
+
+  return {
+    canonicalPath: path,
+    title: `${group.name} | Groups`,
+    description: snippet,
+    type: "website",
+    publishedTime: group.createdAt,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "CommunityGroup",
+      name: group.name,
+      description: snippet,
+      url: absoluteUrl(path),
+      author: {
+        "@type": "Person",
+        name: group.ownerName,
+        url: authorUrl
+      }
+    }
+  };
+}
+
+export function GroupListPage(props: { user: CurrentUser | null; groups: GroupItem[] }) {
   return (
-    <Layout title="Groups" user={props.user}>
+    <Layout title="Groups" user={props.user} seo={{ canonicalPath: "/groups", description: "Browse community groups and forums on Kwenk." }}>
       <PageFrame title="Groups">
-        <h3>[<a href="/groups/new">Create a new group</a>]</h3>
+        <h3>[{props.user ? <a href="/groups/new">Create a new group</a> : <a href="/login">Log in to create a group</a>}]</h3>
         {props.groups.length ? props.groups.map((group) => <GroupSummaryCard group={group} />) : <p>No groups have been created... (yet)</p>}
       </PageFrame>
     </Layout>
@@ -54,7 +84,7 @@ export function GroupFormPage(props: { user: CurrentUser; csrf: string; group?: 
 }
 
 type GroupPageProps = {
-  user: CurrentUser;
+  user: CurrentUser | null;
   csrf: string;
   group: GroupItem;
   posts: PostItem[];
@@ -64,22 +94,27 @@ type GroupPageProps = {
   postsNextHref?: string | null;
   postsResetHref?: string | null;
   postsViewAllHref?: string | null;
+  seo?: PageSeo;
 };
 
 export function GroupPage(props: GroupPageProps) {
   const groupHref = groupPath(props.group);
   const protectedGroup = props.group.id === systemIds.defaultGroupId;
-  const isOwner = props.user.id === props.group.ownerId;
-  const canManage = isOwner || isAdminUser(props.user);
-  const canDelete = !protectedGroup && (canManage || canModerateTarget(props.user, { id: props.group.ownerId, role: props.group.ownerRole }));
-  const membershipAction = !protectedGroup && !isOwner ? (
-    <form method="post" action={`${groupHref}/${props.isMember ? "leave" : "join"}`} class="inline-form">
-      <CsrfInput csrf={props.csrf} />
-      <button class={props.isMember ? "button--secondary" : undefined} type="submit">
-        <ActionLabel action={props.isMember ? "leave" : "add"}>{props.isMember ? "Leave group" : "Join group"}</ActionLabel>
-      </button>
-    </form>
-  ) : null;
+  const isOwner = Boolean(props.user && props.user.id === props.group.ownerId);
+  const canManage = Boolean(props.user && (isOwner || isAdminUser(props.user)));
+  const canDelete = Boolean(props.user && (!protectedGroup && (canManage || canModerateTarget(props.user, { id: props.group.ownerId, role: props.group.ownerRole }))));
+  const membershipAction = props.user ? (
+    !protectedGroup && !isOwner ? (
+      <form method="post" action={`${groupHref}/${props.isMember ? "leave" : "join"}`} class="inline-form">
+        <CsrfInput csrf={props.csrf} />
+        <button class={props.isMember ? "button--secondary" : undefined} type="submit">
+          <ActionLabel action={props.isMember ? "leave" : "add"}>{props.isMember ? "Leave group" : "Join group"}</ActionLabel>
+        </button>
+      </form>
+    ) : null
+  ) : (
+    <p class="card-attribution"><i><a href="/login">Log in</a> or <a href="/signup">sign up</a> to join this group.</i></p>
+  );
   const managementActions = canDelete ? (
     <>
       {canManage ? <a href={`${groupHref}/edit`}><ActionLabel action="edit">Edit</ActionLabel></a> : null}
@@ -93,7 +128,7 @@ export function GroupPage(props: GroupPageProps) {
     <ActionBar className="group-actions" primary={<>{membershipAction}{managementActions}</>} />
   ) : null;
   return (
-    <Layout title={props.group.name} user={props.user} head={<AuthorSkinStyles items={props.posts} />}>
+    <Layout title={props.group.name} user={props.user} head={<AuthorSkinStyles items={props.posts} />} seo={props.seo ?? groupSeo(props.group)}>
       <PageFrame
         back={props.fullPosts ? <BackLink href={groupHref} label={props.group.name} /> : <BackToPage page="groups" />}
         title={props.group.name}

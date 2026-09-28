@@ -2,7 +2,7 @@ import type { Child } from "hono/jsx";
 import { classNames } from "./classes.js";
 import { Icon, type IconName } from "./icons.js";
 
-type ActionKind = "add" | "apply" | "comment" | "delete" | "edit" | "favorite" | "leave" | "lock" | "post" | "prop" | "reply" | "report" | "save" | "search" | "send" | "unlock" | "upload";
+type ActionKind = "add" | "apply" | "comment" | "delete" | "edit" | "favorite" | "leave" | "lock" | "post" | "prop" | "reply" | "report" | "save" | "search" | "send" | "share" | "unlock" | "upload";
 
 const actionIcons: Record<ActionKind, IconName> = {
   add: "add",
@@ -20,6 +20,7 @@ const actionIcons: Record<ActionKind, IconName> = {
   save: "save",
   search: "search",
   send: "send",
+  share: "link",
   unlock: "unlock",
   upload: "upload"
 };

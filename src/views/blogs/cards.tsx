@@ -77,11 +77,21 @@ export function BlogListPage(props: BlogListPageProps) {
         width="wide" 
         title={props.title}
         actions={
-          props.user ? (
-            <a class="button" href="/blog/new">
-              <ActionLabel action="add">Create blog entry</ActionLabel>
+          <div style="display: flex; gap: var(--space-2); align-items: center;">
+            <a
+              class="button button--secondary"
+              href={props.isUserBlog && props.userProfile ? `/u/${props.userProfile.handle}/feed.xml` : "/blog/feed.xml"}
+              target="_blank"
+              title="RSS Feed"
+            >
+              RSS Feed
             </a>
-          ) : null
+            {props.user ? (
+              <a class="button" href="/blog/new">
+                <ActionLabel action="add">Create blog entry</ActionLabel>
+              </a>
+            ) : null}
+          </div>
         }
       >
         <SplitLayout variant="article">
@@ -104,6 +114,11 @@ export function BlogListPage(props: BlogListPageProps) {
                     </li>
                   );
                 })}
+                <li style="margin-top: var(--space-3); border-top: 1px dashed var(--color-panel-rule); padding-top: var(--space-2);">
+                  <a href={props.isUserBlog && props.userProfile ? `/u/${props.userProfile.handle}/feed.xml` : "/blog/feed.xml"} target="_blank" rel="noopener">
+                    RSS Feed
+                  </a>
+                </li>
               </ul>
             </div>
             <AdBanner />

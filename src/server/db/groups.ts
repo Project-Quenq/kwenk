@@ -130,7 +130,6 @@ export function isGroupMember(groupId: number, userId: number) {
 }
 
 export function canViewGroup(viewer: CurrentUser | null, groupId: number) {
-  if (!viewer) return false;
   const visibleOwner = profileVisibilitySql(viewer);
   return Boolean(
     sqlite
@@ -145,15 +144,7 @@ export function canViewGroup(viewer: CurrentUser | null, groupId: number) {
 }
 
 export function groupPostAccessSql(viewer: CurrentUser | null, groupAlias = "g") {
-  if (!viewer) return { sql: "0 = 1", params: [] };
-  if (canBypassVisibility(viewer)) return { sql: "1 = 1", params: [] };
-  return {
-    sql: `EXISTS (
-      SELECT 1 FROM group_members access_member
-      WHERE access_member.group_id = ${groupAlias}.id AND access_member.user_id = ?
-    )`,
-    params: [viewer.id]
-  };
+  return { sql: "1 = 1", params: [] };
 }
 
 export function ownedGroupsForUser(userId: number, limit = limits.exportRows) {

@@ -30,6 +30,18 @@ export function getVisiblePost(id: number, viewer: CurrentUser | null) {
   )[0];
 }
 
+export function recentPublicPosts(limit = 6) {
+  const visible = visiblePostAccessSql(null);
+  const author = authorVisibleSql(null);
+  return postRows(
+    `WHERE ${visible.sql} AND ${author.sql} ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
+    null,
+    ...visible.params,
+    ...author.params,
+    limit
+  );
+}
+
 export function postsForProfilePage(profileId: number, viewer: CurrentUser | null, options: PageOptions = {}) {
   const visiblePost = visiblePostAccessSql(viewer);
   const author = authorVisibleSql(viewer);

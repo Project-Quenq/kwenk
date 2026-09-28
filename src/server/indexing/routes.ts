@@ -1,6 +1,7 @@
 import { isBlogCategory } from "../../policy.js";
 import {
   publicBlogCanonicalPath,
+  publicGroupCanonicalPath,
   publicPostCanonicalPath,
   publicProfileCanonicalPathByHandle,
   publicSkinCanonicalPath
@@ -25,7 +26,8 @@ export const staticContentPaths = [
   "/browse",
   "/blog",
   "/skins",
-  "/arcade"
+  "/arcade",
+  "/groups"
 ] as const;
 
 const staticContentPathSet = new Set<string>(staticContentPaths);
@@ -39,6 +41,7 @@ export function resolveIndexing(c: AppContext): IndexingDecision {
 }
 
 function resolveIndexingPath(path: string): IndexingDecision {
+  if (path === "/sitemap.xml" || path === "/robots.txt" || path === "/blog/feed.xml" || path === "/blog/rss.xml") return index(path);
   if (staticContentPathSet.has(path)) return index(path);
 
   const blogCategory = routeSuffix(path, "/blog/category/");
@@ -84,6 +87,14 @@ function resolveIndexingPath(path: string): IndexingDecision {
     return index(canonicalPath);
   }
 
+  const group = idRoute(path, "/g/");
+  if (group) {
+    if (!["", "/posts"].includes(group.suffix)) return noindex("non-canonical group route");
+    const canonicalPath = publicGroupCanonicalPath(group.id);
+    if (!canonicalPath) return noindex("non-public group");
+    return index(canonicalPath);
+  }
+
   return noindex("unregistered route");
 }
 
@@ -94,7 +105,7 @@ function profileRoute(path: string) {
   const handle = decodeSegment(rawHandle)?.toLowerCase();
   if (!handle) return null;
   const suffix = parts.length ? `/${parts.join("/")}` : "";
-  if (!["", "/blog", "/friends", "/wall"].includes(suffix)) return null;
+  if (!["", "/blog", "/friends", "/wall", "/feed.xml", "/rss.xml"].includes(suffix)) return null;
   return { handle, suffix };
 }
 
