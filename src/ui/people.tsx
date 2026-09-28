@@ -62,6 +62,7 @@ export function PeopleBox(props: {
   prefix?: ViewChild;
   className?: string;
   singleLine?: boolean;
+  grid?: boolean;
   dataAttributes?: DataAttributes;
 }) {
   return (
@@ -75,7 +76,11 @@ export function PeopleBox(props: {
     >
       {props.prefix ? <div class="people-panel__summary">{props.prefix}</div> : null}
       {props.people.length ? (
-        <div class={classNames("people-panel__list", props.singleLine ? "people-panel__list--single-line" : undefined)}>
+        <div class={classNames(
+          "people-panel__list",
+          props.singleLine ? "people-panel__list--single-line" : undefined,
+          props.grid ? "people-panel__list--grid" : undefined
+        )}>
           {props.people.map((person) => <Person person={person} />)}
         </div>
       ) : <p><i>No users found.</i></p>}

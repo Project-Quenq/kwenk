@@ -46,6 +46,7 @@ export function LandingPage(props: LandingPageProps) {
             title="Cool new people" 
             people={coolNewPeople(props.newest)} 
             more="/browse" 
+            grid
           />
           
           <CommunityBox 

@@ -16,6 +16,20 @@
   min-width: 0;
 }
 
+.people-panel__list--grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  justify-items: center;
+  gap: var(--space-6) var(--space-2);
+  width: 100%;
+}
+
+@media (max-width: 36em) {
+  .people-panel__list--grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+}
+
 .people-panel__list--single-line {
   flex-wrap: nowrap;
   gap: 0;
