@@ -34,14 +34,17 @@ export function recentPublicPosts(limit = 6) {
   const visible = visiblePostAccessSql(null);
   const author = authorVisibleSql(null);
 
-  // Prioritize latest posts that have engagement (at least 1 prop or comment)
+  // Require meaningful engagement (at least 2 props/comments combined), ordered by highest engagement score
   const engagedRows = postRows(
     `WHERE ${visible.sql} AND ${author.sql}
       AND (
-        EXISTS (SELECT 1 FROM post_props pp WHERE pp.post_id = po.id)
-        OR EXISTS (SELECT 1 FROM post_comments pc WHERE pc.post_id = po.id)
-      )
-    ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
+        (SELECT COUNT(*) FROM post_props pp WHERE pp.post_id = po.id) +
+        (SELECT COUNT(*) FROM post_comments pc WHERE pc.post_id = po.id)
+      ) >= 2
+    ORDER BY
+      ((SELECT COUNT(*) FROM post_props pp WHERE pp.post_id = po.id) * 2 + (SELECT COUNT(*) FROM post_comments pc WHERE pc.post_id = po.id)) DESC,
+      po.created_at DESC
+    LIMIT ?`,
     null,
     ...visible.params,
     ...author.params,
@@ -52,7 +55,7 @@ export function recentPublicPosts(limit = 6) {
     return engagedRows;
   }
 
-  // Backfill with other recent public posts if there are fewer engaged posts
+  // Backfill with any other engaged public posts if needed
   const excludeIds = engagedRows.map((r) => r.id);
   const needed = limit - engagedRows.length;
   const excludeClause = excludeIds.length
@@ -61,7 +64,10 @@ export function recentPublicPosts(limit = 6) {
 
   const backfillRows = postRows(
     `WHERE ${visible.sql} AND ${author.sql} ${excludeClause}
-    ORDER BY po.created_at DESC, po.id DESC LIMIT ?`,
+    ORDER BY
+      ((SELECT COUNT(*) FROM post_props pp WHERE pp.post_id = po.id) * 2 + (SELECT COUNT(*) FROM post_comments pc WHERE pc.post_id = po.id)) DESC,
+      po.created_at DESC
+    LIMIT ?`,
     null,
     ...visible.params,
     ...author.params,

@@ -50,10 +50,10 @@ export function LandingPage(props: LandingPageProps) {
           />
           
           <CommunityBox 
-            title="Cool new communities" 
+            title="Popular communities" 
             groups={props.newestGroups} 
             more="/groups" 
-            singleLine 
+            limit={6}
           />
           
           <AnnouncementBox settings={props.settings} />
@@ -71,34 +71,6 @@ export function LandingPage(props: LandingPageProps) {
               </div>
             </Panel>
           ) : null}
-
-          <Panel title="Flash arcade spotlights" tone="soft">
-            {props.spotlightGames && props.spotlightGames.length ? (
-              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); width: 100%;">
-                {props.spotlightGames.map((game) => {
-                  const slug = game.url.split("/").pop() ?? "";
-                  const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
-                  return (
-                    <article key={game.id} class="content-card" style="padding: 0; overflow: hidden;">
-                      <a 
-                        href={`/arcade/${slug}`}
-                        style={`display: block; width: 100%; aspect-ratio: 16 / 10; background-image: url('${cdnThumbnail}'); background-size: cover; background-position: center; position: relative; text-decoration: none;`}
-                      >
-                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); padding: var(--space-2); text-align: center;">
-                          <p style="margin: 0; color: white; font-size: 11px; font-weight: bold; overflow-wrap: anywhere;">{game.name}</p>
-                        </div>
-                      </a>
-                    </article>
-                  );
-                })}
-              </div>
-            ) : (
-              <p><i>No games loaded.</i></p>
-            )}
-            <div style="text-align: center; margin-top: var(--space-5);">
-              <a href="/arcade" class="button">&raquo; Browse Full Arcade Collection</a>
-            </div>
-          </Panel>
         </SplitPane>
 
         <SplitPane area="sidebar">
@@ -151,6 +123,34 @@ export function LandingPage(props: LandingPageProps) {
             )}
             <div style="text-align: center; margin-top: var(--space-4);">
               <a href="/blog?sort=popular" class="button">&raquo; Browse Popular Blogs</a>
+            </div>
+          </Panel>
+
+          <Panel title="Flash arcade spotlights" tone="soft">
+            {props.spotlightGames && props.spotlightGames.length ? (
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); width: 100%;">
+                {props.spotlightGames.map((game) => {
+                  const slug = game.url.split("/").pop() ?? "";
+                  const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
+                  return (
+                    <article key={game.id} class="content-card" style="padding: 0; overflow: hidden;">
+                      <a 
+                        href={`/arcade/${slug}`}
+                        style={`display: block; width: 100%; aspect-ratio: 16 / 10; background-image: url('${cdnThumbnail}'); background-size: cover; background-position: center; position: relative; text-decoration: none;`}
+                      >
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); padding: var(--space-1); text-align: center;">
+                          <p style="margin: 0; color: white; font-size: 10px; font-weight: bold; overflow-wrap: anywhere; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{game.name}</p>
+                        </div>
+                      </a>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <p><i>No games loaded.</i></p>
+            )}
+            <div style="text-align: center; margin-top: var(--space-3);">
+              <a href="/arcade" class="button">&raquo; Browse Full Arcade Collection</a>
             </div>
           </Panel>
 

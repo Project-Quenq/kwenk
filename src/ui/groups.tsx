@@ -46,9 +46,10 @@ export function CommunityBox(props: {
   prefix?: ViewChild;
   className?: string;
   singleLine?: boolean;
+  limit?: number;
   dataAttributes?: DataAttributes;
 }) {
-  const groups = props.groups.slice(0, communityBoxLimit);
+  const groups = props.groups.slice(0, props.limit ?? communityBoxLimit);
   return (
     <Panel
       bodyClassName="community-panel__body"
