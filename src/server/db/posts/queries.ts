@@ -34,13 +34,14 @@ export function recentPublicPosts(limit = 6) {
   const visible = visiblePostAccessSql(null);
   const author = authorVisibleSql(null);
 
-  // Require meaningful engagement (at least 2 props/comments combined), ordered by highest engagement score
-  const engagedRows = postRows(
+  // 1. Prioritize posts from the last 14 days that have engagement (props + comments >= 1), ordered by engagement score
+  const freshEngagedRows = postRows(
     `WHERE ${visible.sql} AND ${author.sql}
+      AND po.created_at >= datetime('now', '-14 days')
       AND (
-        (SELECT COUNT(*) FROM post_props pp WHERE pp.post_id = po.id) +
-        (SELECT COUNT(*) FROM post_comments pc WHERE pc.post_id = po.id)
-      ) >= 2
+        EXISTS (SELECT 1 FROM post_props pp WHERE pp.post_id = po.id)
+        OR EXISTS (SELECT 1 FROM post_comments pc WHERE pc.post_id = po.id)
+      )
     ORDER BY
       ((SELECT COUNT(*) FROM post_props pp WHERE pp.post_id = po.id) * 2 + (SELECT COUNT(*) FROM post_comments pc WHERE pc.post_id = po.id)) DESC,
       po.created_at DESC
@@ -51,22 +52,22 @@ export function recentPublicPosts(limit = 6) {
     limit
   );
 
-  if (engagedRows.length >= limit) {
-    return engagedRows;
+  if (freshEngagedRows.length >= limit) {
+    return freshEngagedRows;
   }
 
-  // Backfill with any other engaged public posts if needed
-  const excludeIds = engagedRows.map((r) => r.id);
-  const needed = limit - engagedRows.length;
+  // 2. Backfill with other recent posts from the last 14 days
+  const excludeIds = freshEngagedRows.map((r) => r.id);
+  const needed = limit - freshEngagedRows.length;
   const excludeClause = excludeIds.length
     ? `AND po.id NOT IN (${excludeIds.map(() => "?").join(",")})`
     : "";
 
-  const backfillRows = postRows(
-    `WHERE ${visible.sql} AND ${author.sql} ${excludeClause}
-    ORDER BY
-      ((SELECT COUNT(*) FROM post_props pp WHERE pp.post_id = po.id) * 2 + (SELECT COUNT(*) FROM post_comments pc WHERE pc.post_id = po.id)) DESC,
-      po.created_at DESC
+  const freshRecentRows = postRows(
+    `WHERE ${visible.sql} AND ${author.sql}
+      AND po.created_at >= datetime('now', '-14 days')
+      ${excludeClause}
+    ORDER BY po.created_at DESC, po.id DESC
     LIMIT ?`,
     null,
     ...visible.params,
@@ -75,7 +76,30 @@ export function recentPublicPosts(limit = 6) {
     needed
   );
 
-  return [...engagedRows, ...backfillRows];
+  const combined = [...freshEngagedRows, ...freshRecentRows];
+  if (combined.length >= limit) {
+    return combined;
+  }
+
+  // 3. Fallback for environments without recent posts: latest public posts ordered by recency
+  const allExcludeIds = combined.map((r) => r.id);
+  const fallbackNeeded = limit - combined.length;
+  const fallbackExcludeClause = allExcludeIds.length
+    ? `AND po.id NOT IN (${allExcludeIds.map(() => "?").join(",")})`
+    : "";
+
+  const fallbackRows = postRows(
+    `WHERE ${visible.sql} AND ${author.sql} ${fallbackExcludeClause}
+    ORDER BY po.created_at DESC, po.id DESC
+    LIMIT ?`,
+    null,
+    ...visible.params,
+    ...author.params,
+    ...allExcludeIds,
+    fallbackNeeded
+  );
+
+  return [...combined, ...fallbackRows];
 }
 
 export function publicFeedPage(options: PageOptions = {}) {

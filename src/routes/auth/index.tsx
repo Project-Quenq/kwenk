@@ -187,7 +187,7 @@ function prefillEmail(value: string | undefined) {
 function landingPage(c: AppContext, user: CurrentUser | null, message?: string, status: 200 | 400 = 200) {
   const newestPreview = previewFromRows(newestUsers(user, limits.newestPeople + 1), limits.newestPeople);
   const newestGroupsPreview = previewFromRows(listGroups(user, limits.newestCommunities + 1), limits.newestCommunities);
-  const spotlightGames = getPopularGames(6, user?.id ?? 0);
+  const spotlightGames = getPopularGames(12, user?.id ?? 0);
   const popularBlogs = allBlogs(null, { limit: 5 }, "popular").items;
   const recentPosts = recentPublicPosts(5);
 

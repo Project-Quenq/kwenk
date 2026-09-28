@@ -46,7 +46,6 @@ export function LandingPage(props: LandingPageProps) {
             title="Cool new people" 
             people={coolNewPeople(props.newest)} 
             more="/browse" 
-            singleLine 
           />
           
           <CommunityBox 
@@ -128,7 +127,7 @@ export function LandingPage(props: LandingPageProps) {
 
           <Panel title="Flash arcade spotlights" tone="soft">
             {props.spotlightGames && props.spotlightGames.length ? (
-              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); width: 100%;">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); width: 100%;">
                 {props.spotlightGames.map((game) => {
                   const slug = game.url.split("/").pop() ?? "";
                   const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
