@@ -131,7 +131,7 @@ export function LandingPage(props: LandingPageProps) {
               <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); width: 100%;">
                 {props.spotlightGames.map((game) => {
                   const slug = game.url.split("/").pop() ?? "";
-                  const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
+                  const cdnThumbnail = `https://static.quenq.com/${game.thumbnail}`;
                   return (
                     <article key={game.id} class="content-card" style="padding: 0; overflow: hidden;">
                       <a 

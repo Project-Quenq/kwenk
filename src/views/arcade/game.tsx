@@ -20,8 +20,8 @@ type GamePageProps = {
 export function GamePlayPage(props: GamePageProps) {
   const game = props.game;
   const slug = game.url.split("/").pop() ?? "";
-  const cdnIframeSrc = `https://quenq.com/arcade/data/${game.url}/`;
-  const cdnThumbnail = `https://quenq.com/arcade/data/${game.thumbnail}`;
+  const cdnIframeSrc = `https://static.quenq.com/${game.url}/`;
+  const cdnThumbnail = `https://static.quenq.com/${game.thumbnail}`;
   const canonicalPath = `/arcade/${slug}`;
 
   const cleanDescription = game.description.replace(/\s+/g, " ").trim();
@@ -196,7 +196,7 @@ export function GamePlayPage(props: GamePageProps) {
                 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); width: 100%;">
                   {props.relatedGames.map((related) => {
                     const relatedSlug = related.url.split("/").pop() ?? "";
-                    const relatedThumbnail = `https://quenq.com/arcade/data/${related.thumbnail}`;
+                    const relatedThumbnail = `https://static.quenq.com/${related.thumbnail}`;
                     return (
                       <article key={related.id} class="content-card" style="padding: 0; border-radius: var(--radius-panel); overflow: hidden;">
                         <a 
