@@ -124,7 +124,7 @@ export function SkinDetailPage(props: {
   const managementActions = (
     <>
       {!isOwnSkin ? (
-        <a href={reportPath("skin", props.skin)}><ActionLabel action="report">Report</ActionLabel></a>
+        <a href={reportPath("skin", props.skin)} rel="nofollow"><ActionLabel action="report">Report</ActionLabel></a>
       ) : null}
       {canDelete ? (
         <>

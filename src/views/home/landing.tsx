@@ -34,10 +34,13 @@ export function LandingPage(props: LandingPageProps) {
 
   return (
     <Layout
-      title={props.settings.identity.tagline}
+      title="Retro Social Network & Classic Web Arcade"
       user={props.user}
       head={<AuthorSkinStyles items={props.recentPosts ?? []} />}
-      seo={{ canonicalPath: "/" }}
+      seo={{
+        canonicalPath: "/",
+        description: "Join Kwenk, the nostalgic social network inspired by the early web. Customize your profile with real HTML & CSS, write blogs, join communities, and play 1,000+ classic arcade games free."
+      }}
     >
       <SplitLayout variant="landing">
         

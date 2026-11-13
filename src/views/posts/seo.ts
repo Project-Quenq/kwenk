@@ -6,7 +6,13 @@ import { seoText, type PageSeo } from "../../settings/seo.js";
 
 export function postSeo(post: PostItem): PageSeo {
   const path = postPath(post);
-  const textContent = plainTextFromHtml(post.bodyHtml);
+  const textContent = plainTextFromHtml(post.bodyHtml).trim();
+
+  // Thin micro-posts with no media and no comments are not useful index candidates
+  if (textContent.length < 30 && !post.mediaFilename && post.commentCount === 0) {
+    return { noindex: true, canonicalPath: path };
+  }
+
   const snippet = seoText(textContent, 180) || `${post.username}'s post on Kwenk`;
   const title = textContent ? `${post.username}: "${seoText(textContent, 60)}"` : `${post.username}'s post`;
   const authorUrl = absoluteUrl(profilePath(post.authorHandle));

@@ -1,4 +1,5 @@
 import {
+  publicArcadeGenreIndexPaths,
   publicArcadeIndexPaths,
   publicBlogCategoryIndexPaths,
   publicBlogIndexPaths,
@@ -29,6 +30,7 @@ function sitemapPaths() {
   const paths: SitemapPath[] = [];
   const seen = new Set<string>();
   addSitemapPaths(paths, seen, staticSitemapPaths());
+  addSitemapPaths(paths, seen, publicArcadeGenreIndexPaths());
   addSitemapPaths(paths, seen, publicArcadeIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicBlogCategoryIndexPaths(remainingSitemapSlots(paths)));
   addSitemapPaths(paths, seen, publicBlogIndexPaths(remainingSitemapSlots(paths)));

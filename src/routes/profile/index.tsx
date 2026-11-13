@@ -96,11 +96,7 @@ export function registerProfileRoutes(app: Hono<AppBindings>) {
         user={user}
         title={`${profile.username}'s friends`}
         people={visibleFriendsFor(profile.id, user)}
-        seo={
-          profile.private
-            ? { noindex: true }
-            : { canonicalPath: `${profilePath(profile)}/friends`, description: `Browse ${profile.username}'s public friends.` }
-        }
+        seo={{ noindex: true }}
       />
     );
   });

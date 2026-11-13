@@ -59,9 +59,11 @@ function resolveIndexingPath(path: string): IndexingDecision {
 
   const profile = profileRoute(path);
   if (profile) {
+    if (profile.suffix === "/friends") return noindex("profile friends subpage not indexed");
     const canonicalPath = publicProfileCanonicalPathByHandle(profile.handle);
     if (!canonicalPath) return noindex("non-public profile handle");
-    return index(profile.suffix ? `${canonicalPath}${profile.suffix}` : canonicalPath);
+    if (profile.suffix === "/blog") return index(`${canonicalPath}/blog`);
+    return index(canonicalPath);
   }
 
   const blog = idRoute(path, "/b/");

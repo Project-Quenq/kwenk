@@ -70,7 +70,7 @@ export function BlogEntryPage(props: {
               {props.user ? null : <p><b>Props:</b> {props.blog.propsCount}</p>}
               {!isOwnBlog ? (
                 <p>
-                  <a href={reportPath("blog", props.blog)}>
+                  <a href={reportPath("blog", props.blog)} rel="nofollow">
                     <Icon name="report" /> Report
                   </a>
                 </p>

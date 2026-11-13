@@ -25,8 +25,23 @@ export function ProfilePage(props: ProfilePageProps) {
   );
 }
 
+export function isQualityProfile(props: ProfilePageProps): boolean {
+  if (props.profile.private) return false;
+  const bio = plainTextFromHtml(props.profile.bioHtml).trim();
+  if (bio.length > 30) return true;
+  if (props.profile.skinHtml && props.profile.skinHtml.trim().length > 10) return true;
+  if (props.blogs && props.blogs.length > 0) return true;
+  if (props.wallPosts && props.wallPosts.length > 0) return true;
+  const hasCustomPfp = !defaultProfileImageNames.has(props.profile.pfp);
+  const status = (props.profile.status.status || props.profile.status.currentVibe || "").trim();
+  if (hasCustomPfp && (status.length > 0 || props.friendCount > 1)) return true;
+  return false;
+}
+
 function profileSeo(props: ProfilePageProps): PageSeo {
-  if (props.profile.private) return { noindex: true };
+  if (!isQualityProfile(props)) {
+    return { noindex: true, canonicalPath: profilePath(props.profile) };
+  }
 
   const description = profileDescription(props);
   const url = absoluteUrl(profilePath(props.profile));

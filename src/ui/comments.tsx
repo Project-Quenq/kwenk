@@ -68,7 +68,7 @@ export function CommentList(props: {
         const hasUtilityActions = Boolean(canReport || deleteForm);
         const utilityActions = hasUtilityActions ? (
           <>
-            {canReport ? <a href={reportPath(props.reportType!, comment)}><ActionLabel action="report">Report</ActionLabel></a> : null}
+            {canReport ? <a href={reportPath(props.reportType!, comment)} rel="nofollow"><ActionLabel action="report">Report</ActionLabel></a> : null}
             {deleteForm ? (
               <form method="post" action={deleteForm.action}>
                 <CsrfInput csrf={deleteForm.csrf} />

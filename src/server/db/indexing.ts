@@ -83,6 +83,14 @@ export function publicProfileIndexPaths(limit = sitemapLimit) {
       `SELECT p.handle, max(u.created_at, u.updated_at) AS lastmod
       FROM users u JOIN profiles p ON p.user_id = u.id
       WHERE u.banned_at IS NULL AND p.private = 0
+        AND (
+          length(p.bio_html) > 30 
+          OR length(p.skin_html) > 10 
+          OR EXISTS (SELECT 1 FROM posts po WHERE po.author_id = u.id OR po.wall_user_id = u.id)
+          OR EXISTS (SELECT 1 FROM blogs b WHERE b.author_id = u.id AND b.privacy_level = 0)
+          OR (p.pfp NOT IN ('default', 'default.png') AND (length(json_extract(p.status_json, '$.status')) > 0 OR length(json_extract(p.status_json, '$.currentVibe')) > 0))
+          OR (SELECT count(*) FROM friendships f WHERE (f.sender_id = u.id OR f.receiver_id = u.id) AND f.status = 'ACCEPTED') > 1
+        )
       ORDER BY u.created_at DESC, u.id DESC LIMIT ?`
     )
     .all(limit) as HandleSitemapRow[];
@@ -129,6 +137,7 @@ export function publicPostIndexPaths(limit = sitemapLimit) {
         AND author.banned_at IS NULL
         AND wall_owner.banned_at IS NULL
         AND p.private = 0
+        AND (length(po.body_html) > 40 OR po.media_filename IS NOT NULL OR EXISTS (SELECT 1 FROM post_comments pc WHERE pc.post_id = po.id))
       ORDER BY po.created_at DESC, po.id DESC LIMIT ?`
     )
     .all(limit) as IdSitemapRow[];
@@ -179,4 +188,19 @@ export function publicArcadeIndexPaths(limit = sitemapLimit) {
     const slug = row.url.split("/").pop() ?? "";
     return { path: `/arcade/${slug}`, lastmod: row.lastmod };
   });
+}
+
+export function publicArcadeGenreIndexPaths() {
+  const rows = sqlite
+    .prepare(
+      `SELECT DISTINCT json_each.value AS genre, max(arcade_games.updated_at) AS lastmod
+      FROM arcade_games, json_each(arcade_games.genres_json)
+      GROUP BY json_each.value
+      ORDER BY json_each.value ASC`
+    )
+    .all() as { genre: string; lastmod: string }[];
+  return rows.map((row) => ({
+    path: `/arcade?genre=${encodeURIComponent(row.genre.toLowerCase())}`,
+    lastmod: row.lastmod
+  }));
 }

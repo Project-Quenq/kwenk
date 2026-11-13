@@ -112,9 +112,9 @@ function ProfileActionButton(props: {
   );
 }
 
-function ProfileActionLink(props: { children: ViewChild; href: string; icon: IconName; variant?: ProfileActionVariant }) {
+function ProfileActionLink(props: { children: ViewChild; href: string; icon: IconName; variant?: ProfileActionVariant; rel?: string }) {
   return (
-    <a class={profileActionClass(props.variant)} href={props.href}>
+    <a class={profileActionClass(props.variant)} href={props.href} rel={props.rel ?? "nofollow"}>
       <ProfileActionContent icon={props.icon}>{props.children}</ProfileActionContent>
     </a>
   );

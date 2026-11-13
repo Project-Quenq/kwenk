@@ -79,7 +79,7 @@ export function PostCard(props: {
         <ActionLabel action="share">Share</ActionLabel>
       </button>
       {!isOwnPost ? (
-        <a href={reportPath("post", post)}><ActionLabel action="report">Report</ActionLabel></a>
+        <a href={reportPath("post", post)} rel="nofollow"><ActionLabel action="report">Report</ActionLabel></a>
       ) : null}
       {canDelete ? (
         <form method="post" action={`${href}/delete`} class="inline-form">

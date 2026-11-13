@@ -1,7 +1,7 @@
 import { pageLinks, type PageLinkKey } from "../navigation.js";
 import type { ViewChild } from "./types.js";
 
-export type LinkItem = readonly [label: string, href: string];
+export type LinkItem = readonly [label: string, href: string, rel?: string];
 
 export function BackToPage(props: { page: PageLinkKey }) {
   const page = pageLinks[props.page];
@@ -16,6 +16,8 @@ export function BackLink(props: { href: string; label: string }) {
   );
 }
 
+const defaultNofollowPaths = new Set(["/login", "/signup", "/logout", "/reset", "/verify", "/search"]);
+
 export function InlineLinks(props: { links: LinkItem[]; prefix?: ViewChild | readonly ViewChild[] }) {
   const prefixItems = props.prefix === undefined ? [] : Array.isArray(props.prefix) ? props.prefix : [props.prefix];
   return (
@@ -23,11 +25,14 @@ export function InlineLinks(props: { links: LinkItem[]; prefix?: ViewChild | rea
       {prefixItems.map((item) => (
         <span class="inline-links__item">{item}</span>
       ))}
-      {props.links.map(([label, href]) => (
-        <span class="inline-links__item">
-          <a href={href}>{label}</a>
-        </span>
-      ))}
+      {props.links.map(([label, href, rel]) => {
+        const linkRel = rel ?? (defaultNofollowPaths.has(href) ? "nofollow" : undefined);
+        return (
+          <span class="inline-links__item">
+            <a href={href} rel={linkRel}>{label}</a>
+          </span>
+        );
+      })}
     </span>
   );
 }

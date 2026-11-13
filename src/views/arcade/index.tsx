@@ -28,7 +28,7 @@ export function ArcadeListPage(props: ArcadePageProps) {
     ? "My Props" 
     : matchedGenre || (props.currentGenre ? props.currentGenre.charAt(0).toUpperCase() + props.currentGenre.slice(1) : "All");
 
-  const isFilteredByGenre = props.currentGenre && props.currentGenre.toLowerCase() !== "all";
+  const isFilteredByGenre = props.currentGenre && props.currentGenre.toLowerCase() !== "all" && !isProppedFilter;
 
   const seoDescription = isFilteredByGenre
     ? `Browse and play classic ${formattedGenre} Flash games on Kwenk Arcade. Read community reviews, give props, and play free online.`
@@ -36,9 +36,11 @@ export function ArcadeListPage(props: ArcadePageProps) {
 
   const pageTitle = isProppedFilter ? "My Props" : isFilteredByGenre ? `${formattedGenre} Games` : "Arcade";
 
-  const canonicalPath = props.currentPage > 1
-    ? `/arcade?page=${props.currentPage}`
-    : "/arcade";
+  const canonicalPath = isFilteredByGenre
+    ? `/arcade?genre=${encodeURIComponent(props.currentGenre.toLowerCase())}${props.currentPage > 1 ? `&page=${props.currentPage}` : ""}`
+    : props.currentPage > 1
+      ? `/arcade?page=${props.currentPage}`
+      : "/arcade";
 
   const sortUrl = (sort: "popular" | "alphabetical") => {
     const params = new URLSearchParams();
@@ -56,7 +58,8 @@ export function ArcadeListPage(props: ArcadePageProps) {
       title={`${pageTitle} - Community & Classic Flash Games | Kwenk`}
       user={props.user}
       seo={{
-        canonicalPath,
+        canonicalPath: isProppedFilter ? undefined : canonicalPath,
+        noindex: isProppedFilter ? true : undefined,
         description: seoDescription,
         type: "website"
       }}
